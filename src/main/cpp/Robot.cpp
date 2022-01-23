@@ -6,6 +6,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/Timer.h>
 #include <frc/motorcontrol/PWMSparkMax.h>
+#include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
 
 /**
@@ -56,8 +57,12 @@ public:
   }
 
 private:
-  frc::PWMSparkMax m_right{0};
-  frc::PWMSparkMax m_left{1};
+  frc::PWMSparkMax m_rightA{0}; // The number is the PWM channel on the rio.
+  frc::PWMSparkMax m_rightB{2};
+  frc::PWMSparkMax m_leftA{1};
+  frc::PWMSparkMax m_leftB{3};
+  frc::MotorControllerGroup m_right{m_rightA, m_rightB};
+  frc::MotorControllerGroup m_left{m_leftA, m_leftB};
   frc::DifferentialDrive m_robotDrive{m_left, m_right};
 
   frc::Joystick m_stick{0};
