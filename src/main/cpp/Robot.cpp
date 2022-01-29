@@ -54,6 +54,8 @@ public:
   {
     // Drive with arcade style (use right stick)
     m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX());
+    // Throttle is connected the slider on the controller
+    m_intakeDrive.Set(m_stick.GetThrottle());
   }
 
 private:
@@ -64,6 +66,8 @@ private:
   frc::MotorControllerGroup m_right{m_rightA, m_rightB};
   frc::MotorControllerGroup m_left{m_leftA, m_leftB};
   frc::DifferentialDrive m_robotDrive{m_left, m_right};
+  //Sample intake motor controller
+  frc::PWMSparkMax m_intakeDrive{4};
 
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
