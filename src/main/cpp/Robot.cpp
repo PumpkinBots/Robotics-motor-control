@@ -57,8 +57,8 @@ public:
   {
     // Drive with arcade style (use right stick)
     m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX());
-    // Intake only activited with a trigger press
-    if (m_stick.GetTriggerPressed())
+    // Intake only activited with a button press
+    if (m_stick.GetRawButtonPressed(2))
     {
       m_runIntake = !m_runIntake;
     }
