@@ -48,14 +48,27 @@ public:
     }
   }
 
-  void TeleopInit() override {}
+  void TeleopInit() override 
+  {
+    m_runIntake = false;
+  }
 
   void TeleopPeriodic() override
   {
     // Drive with arcade style (use right stick)
     m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX());
+    // Intake only activited with a trigger press
+    if (m_stick.GetTriggerPressed())
+    {
+      m_runIntake = !m_runIntake;
+    }
+    if (m_runIntake)
+    {
     // Throttle is connected the slider on the controller
-    m_intakeDrive.Set(m_stick.GetThrottle());
+      m_intakeDrive.Set(m_stick.GetThrottle());
+    } else {
+      m_intakeDrive.Set(0);
+    }
   }
 
 private:
@@ -68,6 +81,7 @@ private:
   frc::DifferentialDrive m_robotDrive{m_left, m_right};
   //Sample intake motor controller
   frc::PWMSparkMax m_intakeDrive{4};
+  bool m_runIntake;
 
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
