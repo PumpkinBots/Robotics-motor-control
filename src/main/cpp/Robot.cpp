@@ -9,6 +9,8 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
 
+#include "IntakeSubsystem.h"
+
 /**
  * This sample program shows how to control a motor using a joystick. In the
  * operator control part of the program, the joystick is read and the value is
@@ -29,16 +31,13 @@ public:
 
   void AutonomousInit() override
   {
+    m_intake.Init();
     m_timer.Reset();
     m_timer.Start();
-    m_runIntake = false;
   }
 
   void AutonomousPeriodic() override
   {
-    // Stop the intake wheel.
-    m_intakeDrive.Set(0);
-
     // Drive for 2 seconds
     if (m_timer.Get() < 2_s)
     {
@@ -54,7 +53,7 @@ public:
 
   void TeleopInit() override 
   {
-    m_runIntake = false;
+    m_intake.Init();
   }
 
   void TeleopPeriodic() override
@@ -62,42 +61,21 @@ public:
     // Drive with arcade style (use right stick)
     // Stick forward is -1 on the Y-axis, so invert the signal.
     m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX());
-
-    // Intake only activited with a button press
-    if (m_stick.GetRawButtonPressed(2))
-    {
-      m_runIntake = !m_runIntake;
-    }
-    if (m_runIntake)
-    {
-    // Throttle is connected the slider on the controller
-      m_intakeDrive.Set(m_stick.GetThrottle());
-    } else {
-      m_intakeDrive.Set(0);
-    }
+    // Check and run the IntakeSubsystem.
+    m_intake.RunPeriodic();
   }
 
   void TestInit() override
   {
-    m_runIntake = false;
     // Disable to drive motors in Test mode so that the robot stays on the bench.
     m_robotDrive.StopMotor();
+    m_intake.Init();
   }
 
   void TestPeriodic() override
   {
-    // Intake only activited with a button press
-    if (m_stick.GetRawButtonPressed(2))
-    {
-      m_runIntake = !m_runIntake;
-    }
-    if (m_runIntake)
-    {
-    // Throttle is connected the slider on the controller
-      m_intakeDrive.Set(m_stick.GetThrottle());
-    } else {
-      m_intakeDrive.Set(0);
-    }
+    // Only run the intake subsystem in Test mode.
+    m_intake.RunPeriodic();
   }
 
 private:
@@ -110,10 +88,14 @@ private:
   frc::DifferentialDrive m_robotDrive{m_left, m_right};
   // Sample intake motor controller in PWM mode.
   frc::PWMSparkMax m_intakeDrive{4};
-  bool m_runIntake;
 
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
+
+  // Create an IntakeSubsystem to encapsulate the behavior.
+  // This object must be created after the objects that it uses.
+  // Bind the intake on/off to joystick button 2.
+  IntakeSubsystem m_intake{2, m_intakeDrive, m_stick};
 };
 
 #ifndef RUNNING_FRC_TESTS
