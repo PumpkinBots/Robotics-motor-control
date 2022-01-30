@@ -77,6 +77,29 @@ public:
     }
   }
 
+  void TestInit() override
+  {
+    m_runIntake = false;
+    // Disable to drive motors in Test mode so that the robot stays on the bench.
+    m_robotDrive.StopMotor();
+  }
+
+  void TestPeriodic() override
+  {
+    // Intake only activited with a button press
+    if (m_stick.GetRawButtonPressed(2))
+    {
+      m_runIntake = !m_runIntake;
+    }
+    if (m_runIntake)
+    {
+    // Throttle is connected the slider on the controller
+      m_intakeDrive.Set(m_stick.GetThrottle());
+    } else {
+      m_intakeDrive.Set(0);
+    }
+  }
+
 private:
   frc::PWMSparkMax m_rightA{0}; // The number is the PWM channel on the rio.
   frc::PWMSparkMax m_rightB{2};
