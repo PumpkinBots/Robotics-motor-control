@@ -28,9 +28,8 @@ bool IntakeSubsystem::RunPeriodic()
     if (m_runIntake)
     {
     // Throttle is connected the slider on the controller.
-    // The throttle axis reads -1.0 when pressed forward, so
-    // invert the sign.
-      m_intakeDrive.Set(-m_stick.GetThrottle());
+    // The throttle axis reads -1.0 when pressed forward.
+      m_intakeDrive.Set(m_stick.GetThrottle());
     } else {
       m_intakeDrive.Set(0);
     }
