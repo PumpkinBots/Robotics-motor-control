@@ -103,9 +103,21 @@ public:
 
   void TeleopPeriodic() override
   {
+
+    // Uncomment only one of the drive modes.
+    
     // Drive with arcade style (use right stick)
     // Stick forward is -1 on the Y-axis, so invert the signal.
-    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX());
+    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX(), true);
+    // Alternate mode without squareInputs.
+    // m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX(), false);
+
+    // CurvatureDrive with turn-in-place allowed.
+    //m_robotDrive.CurvatureDrive(-m_stick.GetY(), m_stick.GetX(), true);
+
+    // CurvatureDrive with turn-in-place disabled.
+    //m_robotDrive.CurvatureDrive(-m_stick.GetY(), m_stick.GetX(), false);
+
     // Check and run the IntakeSubsystem.
     m_intake.RunPeriodic();
   }
