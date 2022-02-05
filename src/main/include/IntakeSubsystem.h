@@ -12,9 +12,10 @@ public:
         frc::Joystick& stick
     );
 
-    // Initialize the subsystem.
-    // Call this when entering a mode.
-    void Init();
+    // Initialize the subsystem from Robot::RobotInit().
+    void RobotInit();
+    // Call this when entering any mode.
+    void ModeInit();
     // Call this in Periodic() function to check button and set motor.
     bool RunPeriodic();
 

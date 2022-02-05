@@ -30,9 +30,14 @@ public:
     m_timer.Start();
   }
 
+  void RobotInit() override
+  {
+    m_intake.RobotInit();
+  }
+
   void AutonomousInit() override
   {
-    m_intake.Init();
+    m_intake.ModeInit();
     m_timer.Reset();
     m_timer.Start();
   }
@@ -54,7 +59,7 @@ public:
 
   void TeleopInit() override 
   {
-    m_intake.Init();
+    m_intake.ModeInit();
   }
 
   void TeleopPeriodic() override
@@ -70,7 +75,7 @@ public:
   {
     // Disable to drive motors in Test mode so that the robot stays on the bench.
     m_robotDrive.StopMotor();
-    m_intake.Init();
+    m_intake.ModeInit();
   }
 
   void TestPeriodic() override
@@ -88,13 +93,16 @@ private:
   frc::MotorControllerGroup m_left{m_leftA, m_leftB};
   frc::DifferentialDrive m_robotDrive{m_left, m_right};
 
-  // CAN ID of intake motor controller.
-  static const int intakeCANID = 5;
-  // Sample intake motor controller in CAN mode.
-  rev::CANSparkMax m_intakeDrive{intakeCANID, rev::CANSparkMax::MotorType::kBrushless};
-
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
+
+  /**
+   * kIntakeDeviceID is the CAN ID of the SPARK MAX you are using.
+   * Change to match your setup
+   */
+  static constexpr int kIntakeDeviceID = 5;
+  rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+
 
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
