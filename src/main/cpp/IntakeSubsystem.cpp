@@ -22,6 +22,10 @@ void IntakeSubsystem::ModeInit()
     // made while the robot was disabled.
     m_stick.GetRawButtonPressed(m_buttonIndex);
     StopMotor();
+    // Display local member values.
+    frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
+    frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
+    frc::SmartDashboard::PutNumber("ProcessVariable", 0);
 }
 
 // This is mostly copied from SPARK-MAX-Examples/C++/Get and Set Parameters
@@ -69,6 +73,7 @@ void IntakeSubsystem::RobotInit()
     // Display local member values.
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
     frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
+    frc::SmartDashboard::PutNumber("ProcessVariable", 0);
 }
 
 
@@ -94,7 +99,7 @@ bool IntakeSubsystem::RunPeriodic()
     frc::SmartDashboard::PutNumber("Output", m_intakeDrive.GetAppliedOutput());
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
     frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
-
+    frc::SmartDashboard::PutNumber("ProcessVariable", m_encoder.GetVelocity());
     return m_runIntake;
 }
 
