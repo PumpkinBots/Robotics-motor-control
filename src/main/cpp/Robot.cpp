@@ -9,6 +9,7 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
 
+#include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
 
 /**
@@ -86,8 +87,11 @@ private:
   frc::MotorControllerGroup m_right{m_rightA, m_rightB};
   frc::MotorControllerGroup m_left{m_leftA, m_leftB};
   frc::DifferentialDrive m_robotDrive{m_left, m_right};
-  // Sample intake motor controller in PWM mode.
-  frc::PWMSparkMax m_intakeDrive{4};
+
+  // CAN ID of intake motor controller.
+  static const int intakeCANID = 5;
+  // Sample intake motor controller in CAN mode.
+  rev::CANSparkMax m_intakeDrive{intakeCANID, rev::CANSparkMax::MotorType::kBrushless};
 
   frc::Joystick m_stick{0};
   frc::Timer m_timer;

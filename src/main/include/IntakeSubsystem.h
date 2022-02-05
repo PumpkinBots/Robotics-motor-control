@@ -1,13 +1,14 @@
 #pragma once
 
 #include <frc/Joystick.h>
-#include <frc/motorcontrol/PWMSparkMax.h>
+
+#include "rev/CANSparkMax.h"
 
 class IntakeSubsystem {
 public:
     IntakeSubsystem(
         int enableButtonIndex,
-        frc::PWMSparkMax& intakeDrive,
+        rev::CANSparkMax& intakeDrive,
         frc::Joystick& stick
     );
 
@@ -34,7 +35,7 @@ private:
     bool m_runIntake;
     const int m_buttonIndex;
     // Non-owning reference to the motor controller.
-    frc::PWMSparkMax& m_intakeDrive;
+    rev::CANSparkMax& m_intakeDrive;
     // Non-owning reference to the joystick.
     frc::Joystick& m_stick;
 };

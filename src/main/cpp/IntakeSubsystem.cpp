@@ -2,7 +2,7 @@
 
 IntakeSubsystem::IntakeSubsystem(
         int enableButtonIndex,
-        frc::PWMSparkMax& intakeDrive,
+        rev::CANSparkMax& intakeDrive,
         frc::Joystick& stick
 ) :
     m_runIntake(false),
