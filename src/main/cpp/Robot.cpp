@@ -27,6 +27,8 @@
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 
+#include <frc/filter/SlewRateLimiter.h>
+
 /**
  * This sample program shows how to control a motor using a joystick. In the
  * operator control part of the program, the joystick is read and the value is
@@ -105,10 +107,14 @@ public:
   {
 
     // Uncomment only one of the drive modes.
-    
+
     // Drive with arcade style (use right stick)
     // Stick forward is -1 on the Y-axis, so invert the signal.
-    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX(), true);
+    //m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX(), true);
+
+    //test run
+    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetTwist(), true);
+
     // Alternate mode without squareInputs.
     // m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX(), false);
 
