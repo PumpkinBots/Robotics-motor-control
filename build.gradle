@@ -2,7 +2,48 @@ plugins {
     id "cpp"
     id "google-test-test-suite"
     id "edu.wpi.first.GradleRIO" version "2022.3.1"
+    id "com.palantir.git-version" version "0.13.0"
 }
+
+// Use the com.palntir.git-version plugin to get the project version.
+version gitVersion()
+
+def robotVersionFileInput = file("src/generate/RobotVersion.cpp.in")
+def robotVersionFileOutput = file("$buildDir/generated/cpp/RobotVersion.cpp")
+def generatedOutputDir = file("$buildDir/generated/cpp")
+
+task generateCppVersion() {
+    description = 'Generates the robot version class'
+    def details = versionDetails()
+    def dirty = ''
+    // Use GString with a closure to capture the dirty status.
+    def verStr = "${details.lastTag} on ${details.branchName} at ${details.gitHash}${-> dirty}"
+
+    if (!details.isCleanTag) {
+        dirty = '.dirty'
+    }
+
+    doLast {
+        println "Writing version ${verStr} to $robotVersionFileOutput"
+        println "version: ${version}"
+        println "lastTag: ${details.lastTag}"
+        println "commitDistance: ${details.commitDistance}"
+        println "gitHash: ${details.gitHash}"
+        println "gitHashFull: ${details.gitHashFull}"
+        println "branchName: ${details.branchName}"
+        println "isCleanTag: ${details.isCleanTag}"
+
+        // Make sure the output directory exists or the task fails.
+        generatedOutputDir.mkdirs()
+
+        if (robotVersionFileOutput.exists()) {
+            robotVersionFileOutput.delete()
+        }
+        def read = robotVersionFileInput.text.replace('${robot_version}', verStr)
+        robotVersionFileOutput.write(read)
+    }
+}
+
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -56,7 +97,10 @@ model {
 
             sources.cpp {
                 source {
-                    srcDir 'src/main/cpp'
+                    srcDirs = [
+                        'src/main/cpp',
+                        "$buildDir/generated/cpp"
+                    ]
                     include '**/*.cpp', '**/*.cc'
                 }
                 exportedHeaders {
@@ -94,6 +138,13 @@ model {
             wpi.cpp.vendor.cpp(it)
             wpi.cpp.deps.wpilib(it)
             wpi.cpp.deps.googleTest(it)
+        }
+    }
+    binaries {
+        all {
+            tasks.withType(CppCompile) {
+                dependsOn generateCppVersion
+            }
         }
     }
 }

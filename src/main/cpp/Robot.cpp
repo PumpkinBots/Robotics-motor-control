@@ -18,6 +18,7 @@
 
 #include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
+#include "RobotVersion.h"
 
 /**
  * This sample program shows how to control a motor using a joystick. In the
@@ -60,6 +61,10 @@ public:
 
     fmt::print("Formated m_buildVersion: |{}|\n",  m_buildVersion);
     frc::SmartDashboard::PutString("Robot Code Version", m_buildVersion);
+
+    std::string gitVersion = GetRobotVersion();
+    fmt::print("Version: {}\n", gitVersion);
+    frc::SmartDashboard::PutString("Robot Code Git Version", gitVersion);
   }
 
   void AutonomousInit() override
