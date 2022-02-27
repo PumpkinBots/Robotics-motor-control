@@ -2,15 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+#include <fstream>
+#include <string>
+#include <sstream>
+
+#include <fmt/core.h>
+#include <frc/Filesystem.h>
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
 #include <frc/Timer.h>
 #include <frc/motorcontrol/PWMSparkMax.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 #include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
+#include "RobotVersion.h"
 
 #include "networktables/NetworkTable.h"
 #include "frc/smartdashboard/Smartdashboard.h"
@@ -40,6 +48,30 @@ public:
   void RobotInit() override
   {
     m_intake.RobotInit();
+
+    // Read the build version from the deploy directory.
+    // https://docs.wpilib.org/en/stable/docs/software/advanced-gradlerio/deploy-git-data.html
+    std::string deployDir = frc::filesystem::GetDeployDirectory();
+    std::ifstream branchFile(deployDir + "/branch.txt");
+    std::string branchStr;
+    branchFile >> branchStr;  // This should suck up the whole file into the string.
+    fmt::print("Branch: {}\n", branchStr.c_str());  // This prints to the console.
+    std::ifstream commitFile(deployDir + "/commit.txt");
+    std::string commitStr;
+    commitFile >> commitStr;  // This should suck up the whole file into the string.
+    fmt::print("Commit: {}\n", commitStr.c_str());
+
+    // Format the displayed version using an sstream.
+    std::ostringstream buildVersStream;
+    buildVersStream << "Branch: " << branchStr << " Commit: " << commitStr;
+    m_buildVersion = buildVersStream.str();
+
+    fmt::print("Formated m_buildVersion: |{}|\n",  m_buildVersion);
+    frc::SmartDashboard::PutString("Robot Code Version", m_buildVersion);
+
+    std::string gitVersion = GetRobotVersion();
+    fmt::print("Version: {}\n", gitVersion);
+    frc::SmartDashboard::PutString("Robot Code Git Version", gitVersion);
   }
 
   void AutonomousInit() override
@@ -92,6 +124,7 @@ public:
   }
 
 private:
+  std::string m_buildVersion;
   frc::PWMSparkMax m_rightA{0}; // The number is the PWM channel on the rio.
   frc::PWMSparkMax m_rightB{2};
   frc::PWMSparkMax m_leftA{1};

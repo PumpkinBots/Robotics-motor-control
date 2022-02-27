@@ -2,7 +2,48 @@ plugins {
     id "cpp"
     id "google-test-test-suite"
     id "edu.wpi.first.GradleRIO" version "2022.3.1"
+    id "com.palantir.git-version" version "0.13.0"
 }
+
+// Use the com.palntir.git-version plugin to get the project version.
+version gitVersion()
+
+def robotVersionFileInput = file("src/generate/RobotVersion.cpp.in")
+def robotVersionFileOutput = file("$buildDir/generated/cpp/RobotVersion.cpp")
+def generatedOutputDir = file("$buildDir/generated/cpp")
+
+task generateCppVersion() {
+    description = 'Generates the robot version class'
+    def details = versionDetails()
+    def dirty = ''
+    // Use GString with a closure to capture the dirty status.
+    def verStr = "${details.lastTag} on ${details.branchName} at ${details.gitHash}${-> dirty}"
+
+    if (!details.isCleanTag) {
+        dirty = '.dirty'
+    }
+
+    doLast {
+        println "Writing version ${verStr} to $robotVersionFileOutput"
+        println "version: ${version}"
+        println "lastTag: ${details.lastTag}"
+        println "commitDistance: ${details.commitDistance}"
+        println "gitHash: ${details.gitHash}"
+        println "gitHashFull: ${details.gitHashFull}"
+        println "branchName: ${details.branchName}"
+        println "isCleanTag: ${details.isCleanTag}"
+
+        // Make sure the output directory exists or the task fails.
+        generatedOutputDir.mkdirs()
+
+        if (robotVersionFileOutput.exists()) {
+            robotVersionFileOutput.delete()
+        }
+        def read = robotVersionFileInput.text.replace('${robot_version}', verStr)
+        robotVersionFileOutput.write(read)
+    }
+}
+
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -56,7 +97,10 @@ model {
 
             sources.cpp {
                 source {
-                    srcDir 'src/main/cpp'
+                    srcDirs = [
+                        'src/main/cpp',
+                        "$buildDir/generated/cpp"
+                    ]
                     include '**/*.cpp', '**/*.cc'
                 }
                 exportedHeaders {
@@ -96,4 +140,55 @@ model {
             wpi.cpp.deps.googleTest(it)
         }
     }
+    binaries {
+        all {
+            tasks.withType(CppCompile) {
+                dependsOn generateCppVersion
+            }
+        }
+    }
 }
+
+// Generate Build information as described in https://docs.wpilib.org/en/stable/docs/software/advanced-gradlerio/deploy-git-data.html
+
+tasks.register("writeBranchName") {
+   // Define an output stream to write to instead of terminal
+   def stdout = new ByteArrayOutputStream()
+
+   // Execute the git command
+   exec {
+      commandLine "git", "rev-parse", "--abbrev-ref", "HEAD"
+      // Write to the output stream instead of terminal
+      standardOutput = stdout
+   }
+
+   // Parse the output into a string
+   def branch = stdout.toString().trim()
+
+   // Create a new file
+   new File(
+      // Join project directory and deploy directory
+      projectDir.toString() + "/src/main/deploy",
+      // File name to write to
+      "branch.txt"
+   ).text = branch // Set the contents of the file to the variable branch
+}
+deploy.targets.roborio.artifacts.frcStaticFileDeploy.dependsOn(writeBranchName)
+
+tasks.register("writeCommitHash") {
+   def stdout = new ByteArrayOutputStream()
+
+   exec {
+     commandLine "git", "rev-parse", "--short", "HEAD"
+     standardOutput = stdout
+   }
+
+   def commitHash = stdout.toString().trim()
+
+   new File(
+      projectDir.toString() + "/src/main/deploy",
+      "commit.txt"
+   ).text = commitHash
+}
+
+deploy.targets.roborio.artifacts.frcStaticFileDeploy.dependsOn(writeCommitHash)
