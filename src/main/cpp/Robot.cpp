@@ -18,6 +18,7 @@
 
 #include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
+#include "HardwareIDs.h"
 #include "RobotVersion.h"
 
 #include "networktables/NetworkTable.h"
@@ -107,24 +108,8 @@ public:
 
   void TeleopPeriodic() override
   {
-
-    // Uncomment only one of the drive modes.
-
-    // Drive with arcade style (use right stick)
-    // Stick forward is -1 on the Y-axis, so invert the signal.
-    //m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX(), true);
-
-    //test run
+    // Y-axis is negative pushed forward, so invert the value.
     m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetTwist(), true);
-
-    // Alternate mode without squareInputs.
-    // m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX(), false);
-
-    // CurvatureDrive with turn-in-place allowed.
-    //m_robotDrive.CurvatureDrive(-m_stick.GetY(), m_stick.GetX(), true);
-
-    // CurvatureDrive with turn-in-place disabled.
-    //m_robotDrive.CurvatureDrive(-m_stick.GetY(), m_stick.GetX(), false);
 
     // Check and run the IntakeSubsystem.
     m_intake.RunPeriodic();
@@ -156,18 +141,14 @@ private:
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
 
-  /**
-   * kIntakeDeviceID is the CAN ID of the SPARK MAX you are using.
-   * Change to match your setup
-   */
-  static constexpr int kIntakeDeviceID = 5;
+
   rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
 
 
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
   // Bind the intake on/off to joystick button 2.
-  IntakeSubsystem m_intake{2, m_intakeDrive, m_stick};
+  IntakeSubsystem m_intake{kIntakeButton, m_intakeDrive, m_stick};
 
   // Allow the robot to access the data from the camera. 
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
