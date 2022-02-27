@@ -12,6 +12,13 @@
 #include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
 
+#include "networktables/NetworkTable.h"
+#include "frc/smartdashboard/Smartdashboard.h"
+#include "networktables/NetworkTableInstance.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableValue.h"
+#include "wpi/span.h"
+
 /**
  * This sample program shows how to control a motor using a joystick. In the
  * operator control part of the program, the joystick is read and the value is
@@ -108,6 +115,13 @@ private:
   // This object must be created after the objects that it uses.
   // Bind the intake on/off to joystick button 2.
   IntakeSubsystem m_intake{2, m_intakeDrive, m_stick};
+
+  // Allow the robot to access the data from the camera. 
+  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+  double targetOffsetAngle_Horizontal = table->GetNumber("tx",0.0);
+  double targetOffsetAngle_Vertical = table->GetNumber("ty",0.0);
+  double targetArea = table->GetNumber("ta",0.0);
+  double targetSkew = table->GetNumber("ts",0.0);
 };
 
 #ifndef RUNNING_FRC_TESTS
