@@ -29,6 +29,8 @@
 
 #include <frc/filter/SlewRateLimiter.h>
 
+#include <frc/filter/SlewRateLimiter.h>
+
 /**
  * This sample program shows how to control a motor using a joystick. In the
  * operator control part of the program, the joystick is read and the value is
