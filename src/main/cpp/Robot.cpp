@@ -15,6 +15,8 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/smartdashboard/SendableChooser.h>
+
 
 #include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
@@ -50,9 +52,19 @@ public:
     m_timer.Start();
   }
 
-  void RobotInit() override
-  {
+  void RobotInit() override {
     m_intake.RobotInit();
+    m_fakeTransport.RobotInit();
+    m_fakeLaunch.RobotInit();
+
+    m_chooser.SetDefaultOption("Intake", &m_intake);
+    m_chooser.AddOption("Transport", &m_fakeTransport);
+    m_chooser.AddOption("Launch", &m_fakeLaunch);
+
+    m_chooser.SetName("test");
+
+    frc::SmartDashboard::PutData(&m_chooser);
+
 
     // Read the build version from the deploy directory.
     // https://docs.wpilib.org/en/stable/docs/software/advanced-gradlerio/deploy-git-data.html
@@ -120,12 +132,15 @@ public:
     // Disable to drive motors in Test mode so that the robot stays on the bench.
     m_robotDrive.StopMotor();
     m_intake.ModeInit();
+    m_fakeTransport.ModeInit();
+    m_fakeLaunch.ModeInit();
+    m_testChoice = m_chooser.GetSelected();
   }
 
   void TestPeriodic() override
   {
     // Only run the intake subsystem in Test mode.
-    m_intake.RunPeriodic();
+    m_testChoice -> RunPeriodic();
   }
 
 private:
@@ -142,13 +157,19 @@ private:
   frc::Timer m_timer;
 
 
+  rev::CANSparkMax m_transportDrive{kTransportDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_launchDrive{kLaunchDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-
 
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
   // Bind the intake on/off to joystick button 2.
   IntakeSubsystem m_intake{kIntakeButton, m_intakeDrive, m_stick};
+  IntakeSubsystem m_fakeTransport{kIntakeButton, m_transportDrive, m_stick};
+  IntakeSubsystem m_fakeLaunch{kIntakeButton, m_launchDrive, m_stick};
+
+  frc::SendableChooser<IntakeSubsystem*> m_chooser;
+  IntakeSubsystem *m_testChoice = nullptr;
 
   // Allow the robot to access the data from the camera. 
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
