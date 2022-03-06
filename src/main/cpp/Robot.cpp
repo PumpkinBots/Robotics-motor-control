@@ -20,6 +20,8 @@
 
 #include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
+#include "LaunchSubsystem.h"
+#include "TransportSubsystem.h"
 #include "HardwareIDs.h"
 #include "RobotVersion.h"
 
@@ -54,6 +56,9 @@ public:
 
   void RobotInit() override {
     m_intake.RobotInit();
+    m_launch.RobotInit();
+    m_transport.RobotInit();
+
     m_fakeTransport.RobotInit();
     m_fakeLaunch.RobotInit();
 
@@ -61,7 +66,7 @@ public:
     m_chooser.AddOption("Transport", &m_fakeTransport);
     m_chooser.AddOption("Launch", &m_fakeLaunch);
 
-    m_chooser.SetName("test");
+    m_chooser.SetName("System");
 
     frc::SmartDashboard::PutData(&m_chooser);
 
@@ -94,6 +99,9 @@ public:
   void AutonomousInit() override
   {
     m_intake.ModeInit();
+    m_launch.ModeInit();
+    m_transport.ModeInit();
+
     m_timer.Reset();
     m_timer.Start();
   }
@@ -116,6 +124,9 @@ public:
   void TeleopInit() override 
   {
     m_intake.ModeInit();
+    m_launch.ModeInit();
+    m_transport.ModeInit();
+
   }
 
   void TeleopPeriodic() override
@@ -125,6 +136,9 @@ public:
 
     // Check and run the IntakeSubsystem.
     m_intake.RunPeriodic();
+    m_launch.RunPeriodic();
+    m_transport.RunPeriodic();
+
   }
 
   void TestInit() override
@@ -132,6 +146,8 @@ public:
     // Disable to drive motors in Test mode so that the robot stays on the bench.
     m_robotDrive.StopMotor();
     m_intake.ModeInit();
+    m_launch.ModeInit();
+    m_transport.ModeInit();
     m_fakeTransport.ModeInit();
     m_fakeLaunch.ModeInit();
     m_testChoice = m_chooser.GetSelected();
@@ -156,7 +172,6 @@ private:
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
 
-
   rev::CANSparkMax m_transportDrive{kTransportDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_launchDrive{kLaunchDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
@@ -164,9 +179,20 @@ private:
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
   // Bind the intake on/off to joystick button 2.
+  // Bind the transport on/off to joystick button 5. 
   IntakeSubsystem m_intake{kIntakeButton, m_intakeDrive, m_stick};
-  IntakeSubsystem m_fakeTransport{kIntakeButton, m_transportDrive, m_stick};
-  IntakeSubsystem m_fakeLaunch{kIntakeButton, m_launchDrive, m_stick};
+  IntakeSubsystem m_fakeTransport{kTransportButton, m_transportDrive, m_stick};
+  IntakeSubsystem m_fakeLaunch{kLaunchButton, m_launchDrive, m_stick};
+
+// BEGIN: TEST CODE
+  //temporary assignment of button for shooter
+  //TODO: clean-up, suggested creating a LaunchSubsystem
+  LaunchSubsystem m_launch{kLaunchButton, m_launchDrive, m_stick};
+
+  //temporary assignment of button for shooter
+  //TODO: clean-up, suggested creating a LaunchSubsystem
+  TransportSubsystem m_transport{kTransportButton, m_transportDrive, m_stick};
+// END: TEST CODE
 
   frc::SendableChooser<IntakeSubsystem*> m_chooser;
   IntakeSubsystem *m_testChoice = nullptr;
