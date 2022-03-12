@@ -15,9 +15,14 @@
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/smartdashboard/SendableChooser.h>
+
 
 #include "rev/CANSparkMax.h"
 #include "IntakeSubsystem.h"
+#include "LaunchSubsystem.h"
+#include "TransportSubsystem.h"
+#include "HardwareIDs.h"
 #include "RobotVersion.h"
 
 #include "networktables/NetworkTable.h"
@@ -26,6 +31,10 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
+
+#include <frc/filter/SlewRateLimiter.h>
+
+#include <frc/filter/SlewRateLimiter.h>
 
 /**
  * This sample program shows how to control a motor using a joystick. In the
@@ -45,9 +54,22 @@ public:
     m_timer.Start();
   }
 
-  void RobotInit() override
-  {
+  void RobotInit() override {
     m_intake.RobotInit();
+    m_launch.RobotInit();
+    m_transport.RobotInit();
+
+    m_fakeTransport.RobotInit();
+    m_fakeLaunch.RobotInit();
+
+    m_chooser.SetDefaultOption("Intake", &m_intake);
+    m_chooser.AddOption("Transport", &m_fakeTransport);
+    m_chooser.AddOption("Launch", &m_fakeLaunch);
+
+    m_chooser.SetName("System");
+
+    frc::SmartDashboard::PutData(&m_chooser);
+
 
     // Read the build version from the deploy directory.
     // https://docs.wpilib.org/en/stable/docs/software/advanced-gradlerio/deploy-git-data.html
@@ -77,6 +99,9 @@ public:
   void AutonomousInit() override
   {
     m_intake.ModeInit();
+    m_launch.ModeInit();
+    m_transport.ModeInit();
+
     m_timer.Reset();
     m_timer.Start();
   }
@@ -99,15 +124,21 @@ public:
   void TeleopInit() override 
   {
     m_intake.ModeInit();
+    m_launch.ModeInit();
+    m_transport.ModeInit();
+
   }
 
   void TeleopPeriodic() override
   {
-    // Drive with arcade style (use right stick)
-    // Stick forward is -1 on the Y-axis, so invert the signal.
-    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX());
+    // Y-axis is negative pushed forward, so invert the value.
+    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetTwist(), true);
+
     // Check and run the IntakeSubsystem.
     m_intake.RunPeriodic();
+    m_launch.RunPeriodic();
+    m_transport.RunPeriodic();
+
   }
 
   void TestInit() override
@@ -115,12 +146,17 @@ public:
     // Disable to drive motors in Test mode so that the robot stays on the bench.
     m_robotDrive.StopMotor();
     m_intake.ModeInit();
+    m_launch.ModeInit();
+    m_transport.ModeInit();
+    m_fakeTransport.ModeInit();
+    m_fakeLaunch.ModeInit();
+    m_testChoice = m_chooser.GetSelected();
   }
 
   void TestPeriodic() override
   {
     // Only run the intake subsystem in Test mode.
-    m_intake.RunPeriodic();
+    m_testChoice -> RunPeriodic();
   }
 
 private:
@@ -136,18 +172,30 @@ private:
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
 
-  /**
-   * kIntakeDeviceID is the CAN ID of the SPARK MAX you are using.
-   * Change to match your setup
-   */
-  static constexpr int kIntakeDeviceID = 5;
+  rev::CANSparkMax m_transportDrive{kTransportDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_launchDrive{kLaunchDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-
 
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
   // Bind the intake on/off to joystick button 2.
-  IntakeSubsystem m_intake{2, m_intakeDrive, m_stick};
+  // Bind the transport on/off to joystick button 5. 
+  IntakeSubsystem m_intake{kIntakeButton, m_intakeDrive, m_stick};
+  IntakeSubsystem m_fakeTransport{kTransportButton, m_transportDrive, m_stick};
+  IntakeSubsystem m_fakeLaunch{kLaunchButton, m_launchDrive, m_stick};
+
+// BEGIN: TEST CODE
+  //temporary assignment of button for shooter
+  //TODO: clean-up, suggested creating a LaunchSubsystem
+  LaunchSubsystem m_launch{kLaunchButton, m_launchDrive, m_stick};
+
+  //temporary assignment of button for shooter
+  //TODO: clean-up, suggested creating a LaunchSubsystem
+  TransportSubsystem m_transport{kTransportButton, m_transportDrive, m_stick};
+// END: TEST CODE
+
+  frc::SendableChooser<IntakeSubsystem*> m_chooser;
+  IntakeSubsystem *m_testChoice = nullptr;
 
   // Allow the robot to access the data from the camera. 
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
