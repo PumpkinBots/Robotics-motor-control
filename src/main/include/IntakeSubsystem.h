@@ -40,5 +40,6 @@ private:
     // Non-owning reference to the joystick.
     frc::Joystick& m_stick;
     // Encoder object created to display velocity values
-    rev::SparkMaxRelativeEncoder m_encoder = m_intakeDrive.GetEncoder();
+    rev::SparkMaxRelativeEncoder m_encoder;
+    double m_throttle;
 };
