@@ -25,7 +25,6 @@ void IntakeSubsystem::ModeInit()
     // Display local member values.
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
     frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
-    frc::SmartDashboard::PutNumber("ProcessVariable", 0);
 }
 
 // This is mostly copied from SPARK-MAX-Examples/C++/Get and Set Parameters
@@ -49,7 +48,7 @@ void IntakeSubsystem::RobotInit()
      *  REVLibError::kTimeout
      */
     if(m_intakeDrive.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast) != rev::REVLibError::kOk) {
-      frc::SmartDashboard::PutString("Idle Mode", "Error");
+      frc::SmartDashboard::PutString("Intake Idle Mode", "Error");
     }
 
     /**
@@ -57,23 +56,22 @@ void IntakeSubsystem::RobotInit()
      * from the controller
      */
     if(m_intakeDrive.GetIdleMode() == rev::CANSparkMax::IdleMode::kCoast) {
-      frc::SmartDashboard::PutString("Idle Mode", "Coast");
+      frc::SmartDashboard::PutString("Intake Idle Mode", "Coast");
     } else {
-      frc::SmartDashboard::PutString("Idle Mode", "Brake");
+      frc::SmartDashboard::PutString("Intake Idle Mode", "Brake");
     }
 
     // Set ramp rate to 0
     if(m_intakeDrive.SetOpenLoopRampRate(0) != rev::REVLibError::kOk) {
-      frc::SmartDashboard::PutString("Ramp Rate", "Error");
+      frc::SmartDashboard::PutString("Intake Ramp Rate", "Error");
     }
 
     // read back ramp rate value
-    frc::SmartDashboard::PutNumber("Ramp Rate", m_intakeDrive.GetOpenLoopRampRate());
+    frc::SmartDashboard::PutNumber("Intake Ramp Rate", m_intakeDrive.GetOpenLoopRampRate());
 
     // Display local member values.
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
     frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
-    frc::SmartDashboard::PutNumber("ProcessVariable", 0);
 }
 
 
@@ -94,12 +92,11 @@ bool IntakeSubsystem::RunPeriodic()
       m_intakeDrive.Set(0);
     }
     // periodically read voltage, temperature, and applied output and publish to SmartDashboard
-    frc::SmartDashboard::PutNumber("Voltage", m_intakeDrive.GetBusVoltage());
-    frc::SmartDashboard::PutNumber("Temperature", m_intakeDrive.GetMotorTemperature());
-    frc::SmartDashboard::PutNumber("Output", m_intakeDrive.GetAppliedOutput());
+    frc::SmartDashboard::PutNumber("Intake Voltage", m_intakeDrive.GetBusVoltage());
+    frc::SmartDashboard::PutNumber("Intake Temperature", m_intakeDrive.GetMotorTemperature());
+    frc::SmartDashboard::PutNumber("Intake Output", m_intakeDrive.GetAppliedOutput());
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
     frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
-    frc::SmartDashboard::PutNumber("ProcessVariable", m_encoder.GetVelocity());
     return m_runIntake;
 }
 

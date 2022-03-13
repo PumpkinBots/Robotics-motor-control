@@ -36,7 +36,7 @@ private:
     bool m_runTransport;
     const int m_buttonIndex;
     // Non-owning reference to the motor controller.
-    rev::CANSparkMax& m_TransportDrive;
+    rev::CANSparkMax& m_transportDrive;
     // Non-owning reference to the joystick.
     frc::Joystick& m_stick;
     // Encoder object created to display velocity values

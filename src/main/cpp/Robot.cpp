@@ -86,6 +86,7 @@ public:
 
   void AutonomousInit() override
   {
+    m_robotDrive.StopMotor();
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
@@ -111,10 +112,10 @@ public:
 
   void TeleopInit() override 
   {
+    m_robotDrive.StopMotor();
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
-
   }
 
   void TeleopPeriodic() override
@@ -140,10 +141,10 @@ public:
 
   void TestPeriodic() override
   {
-    // Only run the intake subsystem in Test mode.
-    m_intake.ModeInit();
-    m_launch.ModeInit();
-    m_transport.ModeInit();
+    // Do not run the drive in Test mode.
+    m_intake.RunPeriodic();
+    m_launch.RunPeriodic();
+    m_transport.RunPeriodic();
 
   }
 
