@@ -168,18 +168,11 @@ private:
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
   // Bind the intake on/off to joystick button 2.
-  // Bind the transport on/off to joystick button 5. 
   IntakeSubsystem m_intake{kIntakeButton, m_intakeDrive, m_stick};
-
-// BEGIN: TEST CODE
-  //temporary assignment of button for shooter
-  //TODO: clean-up, suggested creating a LaunchSubsystem
+  // Bind the launch wheel to joystick button 3.
   LaunchSubsystem m_launch{kLaunchButton, m_launchDrive, m_stick};
-
-  //temporary assignment of button for shooter
-  //TODO: clean-up, suggested creating a LaunchSubsystem
+  // Bind the transport on/off to joystick button 1, the trigger.
   TransportSubsystem m_transport{kTransportButton, m_transportDrive, m_stick};
-// END: TEST CODE
 
   // Allow the robot to access the data from the camera. 
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
