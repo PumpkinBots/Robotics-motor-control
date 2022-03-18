@@ -9,7 +9,11 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive"
+      "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
+      "/LiveWindow/Ungrouped/PWMSparkMax[0]": "Motor Controller",
+      "/LiveWindow/Ungrouped/PWMSparkMax[1]": "Motor Controller",
+      "/LiveWindow/Ungrouped/PWMSparkMax[2]": "Motor Controller",
+      "/LiveWindow/Ungrouped/PWMSparkMax[3]": "Motor Controller"
     },
     "windows": {
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": {
