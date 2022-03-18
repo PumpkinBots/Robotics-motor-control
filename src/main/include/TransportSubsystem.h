@@ -24,16 +24,9 @@ public:
 
 public:
     // These are for tests an inspection.
-    bool isEnabled() const {return m_runTransport;}
     int buttonIndex() const {return m_buttonIndex;}
-    bool SetEnable(bool value)
-    {
-        m_runTransport = value;
-        return isEnabled();
-    }
 
 private:
-    bool m_runTransport;
     const int m_buttonIndex;
     // Non-owning reference to the motor controller.
     rev::CANSparkMax& m_transportDrive;

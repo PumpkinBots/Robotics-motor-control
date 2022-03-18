@@ -7,7 +7,6 @@ TransportSubsystem::TransportSubsystem(
         rev::CANSparkMax& TransportDrive,
         frc::Joystick& stick
 ) :
-    m_runTransport(false),
     m_buttonIndex(enableButtonIndex),
     m_transportDrive{TransportDrive},
     m_stick{stick}
@@ -67,19 +66,15 @@ void TransportSubsystem::RobotInit()
     frc::SmartDashboard::PutNumber("Transport Ramp Rate", m_transportDrive.GetOpenLoopRampRate());
 
     // Display local member values.
-    frc::SmartDashboard::PutBoolean("Run Transport", m_runTransport);
+    frc::SmartDashboard::PutBoolean("Run Transport", false);
 }
 
 
 bool TransportSubsystem::RunPeriodic()
 {
     // Toggle Transport state on button press.
-    if (m_stick.GetRawButtonPressed(m_buttonIndex))
-    {
-      m_runTransport = !m_runTransport;
-    }
-    // 
-    if (m_runTransport)
+    bool runTransport = m_stick.GetRawButton(m_buttonIndex);
+    if (runTransport)
     {
     // Throttle is connected the slider on the controller.
     // The throttle axis reads -1.0 when pressed forward.
@@ -91,13 +86,12 @@ bool TransportSubsystem::RunPeriodic()
     frc::SmartDashboard::PutNumber("Transport Voltage", m_transportDrive.GetBusVoltage());
     frc::SmartDashboard::PutNumber("Transport Temperature", m_transportDrive.GetMotorTemperature());
     frc::SmartDashboard::PutNumber("Transport Output", m_transportDrive.GetAppliedOutput());
-    frc::SmartDashboard::PutBoolean("Run Transport", m_runTransport);
-    return m_runTransport;
+    frc::SmartDashboard::PutBoolean("Run Transport", runTransport);
+    return runTransport;
 }
 
 
 void TransportSubsystem::StopMotor()
 {
-    m_runTransport = false;
     m_transportDrive.StopMotor();
 }
