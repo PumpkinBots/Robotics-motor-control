@@ -11,8 +11,6 @@
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
 #include <frc/Timer.h>
-#include <frc/motorcontrol/PWMSparkMax.h>
-#include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -26,7 +24,7 @@
 #include "RobotVersion.h"
 
 #include "networktables/NetworkTable.h"
-#include "frc/smartdashboard/Smartdashboard.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 #include "networktables/NetworkTableInstance.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableValue.h"
@@ -49,7 +47,6 @@ class Robot : public frc::TimedRobot
 public:
   Robot()
   {
-    //m_leftLeader.SetInverted(true);
     m_robotDrive.SetExpiration(100_ms);
     m_timer.Start();
     m_testDrives.push_back(&m_leftLeader);
@@ -67,6 +64,7 @@ public:
     // Set followers
     m_leftFollower.Follow(m_leftLeader);
     m_rightFollower.Follow(m_rightLeader);
+    m_rightLeader.SetInverted(true);
 
     m_intake.RobotInit();
     m_launch.RobotInit();
@@ -156,7 +154,7 @@ public:
     m_stick.GetRawButtonPressed(testNextButton);
     m_runTest = false;
     frc::SmartDashboard::PutNumber("AAindex", m_testIndex);
-    fmt:printf("Switched to index %d  device id %d\n", m_testIndex, m_testDrives[m_testIndex]->GetDeviceId());
+    fmt::print("Switched to index {}  device id {}\n", m_testIndex, m_testDrives[m_testIndex]->GetDeviceId());
 
   }
 
@@ -179,7 +177,7 @@ public:
     if (m_stick.GetRawButtonPressed(testNextButton)) {
       m_testIndex++;
       if (m_testIndex > 3) { m_testIndex = 0;}
-      fmt:printf("Switched to index %d  device id %d\n", m_testIndex, m_testDrives[m_testIndex]->GetDeviceId());
+      fmt::print("Switched to index {}  device id {}\n", m_testIndex, m_testDrives[m_testIndex]->GetDeviceId());
     }
   }
 
