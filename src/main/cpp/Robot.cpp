@@ -108,8 +108,8 @@ public:
 
   void AutonomousPeriodic() override
   {
-    // Drive for 3 seconds
-    if (m_timer.Get() < 3_s)
+    // Drive for 2 seconds
+    if (m_timer.Get() < 2_s)
     {
       // Drive backwards 3/4 speed
       m_robotDrive.ArcadeDrive(0.75, 0.0);
