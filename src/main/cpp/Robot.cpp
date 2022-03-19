@@ -112,7 +112,7 @@ public:
     if (m_timer.Get() < 3_s)
     {
       // Drive backwards 3/4 speed
-      m_robotDrive.ArcadeDrive(-0.75, 0.0);
+      m_robotDrive.ArcadeDrive(0.75, 0.0);
     }
     else
     {
@@ -131,8 +131,9 @@ public:
 
   void TeleopPeriodic() override
   {
-    // Y-axis is negative pushed forward, so invert the value.
-    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetTwist(), true);
+    // Y-axis is negative pushed forward, and now the drive forward
+    // is also negative. However invert the twist input.
+    m_robotDrive.ArcadeDrive(m_stick.GetY(), -m_stick.GetTwist(), true);
 
     // Check and run the IntakeSubsystem.
     m_intake.RunPeriodic();
