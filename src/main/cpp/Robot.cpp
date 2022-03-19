@@ -111,8 +111,8 @@ public:
     // Drive for 2 seconds
     if (m_timer.Get() < 2_s)
     {
-      // Drive backwards 3/4 speed
-      m_robotDrive.ArcadeDrive(0.75, 0.0);
+      // Drive backwards half speed
+      m_robotDrive.ArcadeDrive(0.5, 0.0);
     }
     else
     {
