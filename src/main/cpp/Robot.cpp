@@ -49,9 +49,13 @@ class Robot : public frc::TimedRobot
 public:
   Robot()
   {
-    m_left.SetInverted(true);
-    m_robotDrive.SetExpiration(100_ms);
+   // m_left.SetInverted(true);
+   // m_robotDrive.SetExpiration(100_ms);
     m_timer.Start();
+    m_testDrives.push_back(&m_leftA);
+    m_testDrives.push_back(&m_leftB);
+    m_testDrives.push_back(&m_rightA);
+    m_testDrives.push_back(&m_rightB);
   }
 
   void RobotInit() override {
@@ -86,7 +90,7 @@ public:
 
   void AutonomousInit() override
   {
-    m_robotDrive.StopMotor();
+    //m_robotDrive.StopMotor();
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
@@ -101,18 +105,18 @@ public:
     if (m_timer.Get() < 3_s)
     {
       // Drive backwards 3/4 speed
-      m_robotDrive.ArcadeDrive(-0.75, 0.0);
+      //m_robotDrive.ArcadeDrive(-0.75, 0.0);
     }
     else
     {
       // Stop robot
-      m_robotDrive.ArcadeDrive(0.0, 0.0);
+      //m_robotDrive.ArcadeDrive(0.0, 0.0);
     }
   }
 
   void TeleopInit() override 
   {
-    m_robotDrive.StopMotor();
+    //m_robotDrive.StopMotor();
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
@@ -121,7 +125,7 @@ public:
   void TeleopPeriodic() override
   {
     // Y-axis is negative pushed forward, so invert the value.
-    m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetTwist(), true);
+    //m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetTwist(), true);
 
     // Check and run the IntakeSubsystem.
     m_intake.RunPeriodic();
@@ -133,10 +137,18 @@ public:
   void TestInit() override
   {
     // Disable to drive motors in Test mode so that the robot stays on the bench.
-    m_robotDrive.StopMotor();
+    //m_robotDrive.StopMotor();
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
+
+    m_testIndex = 0;
+    m_stick.GetRawButtonPressed(testStartButton);
+    m_stick.GetRawButtonPressed(testNextButton);
+    m_runTest = false;
+    frc::SmartDashboard::PutNumber("AAindex", m_testIndex);
+    fmt:printf("Switched to index %d  channel %d\n", m_testIndex, m_testDrives[m_testIndex]->GetChannel());
+
   }
 
   void TestPeriodic() override
@@ -146,17 +158,33 @@ public:
     m_launch.RunPeriodic();
     m_transport.RunPeriodic();
 
+  frc::SmartDashboard::PutNumber("AAindex", m_testIndex);
+  if (m_stick.GetRawButtonPressed(testStartButton)) {
+    m_runTest = !m_runTest;
+  }
+  if (m_runTest) {
+    //m_testDrives[m_testIndex]->Set(0.5);
+    m_testDrives[m_testIndex]->Set(m_stick.GetThrottle());
+  } else {
+    m_testDrives[m_testIndex]->Set(0);
+    if (m_stick.GetRawButtonPressed(testNextButton)) {
+      m_testIndex++;
+      if (m_testIndex > 3) { m_testIndex = 0;}
+      fmt:printf("Switched to index %d  channel %d\n", m_testIndex, m_testDrives[m_testIndex]->GetChannel());
+    }
+  }
+
   }
 
 private:
   std::string m_buildVersion;
   frc::PWMSparkMax m_rightA{0}; // The number is the PWM channel on the rio.
-  frc::PWMSparkMax m_rightB{2};
+  frc::PWMSparkMax m_rightB{6};
   frc::PWMSparkMax m_leftA{1};
   frc::PWMSparkMax m_leftB{3};
-  frc::MotorControllerGroup m_right{m_rightA, m_rightB};
-  frc::MotorControllerGroup m_left{m_leftA, m_leftB};
-  frc::DifferentialDrive m_robotDrive{m_left, m_right};
+  // frc::MotorControllerGroup m_right{m_rightA, m_rightB};
+  // frc::MotorControllerGroup m_left{m_leftA, m_leftB};
+  // frc::DifferentialDrive m_robotDrive{m_left, m_right};
 
   frc::Joystick m_stick{0};
   frc::Timer m_timer;
@@ -180,6 +208,13 @@ private:
   double targetOffsetAngle_Vertical = table->GetNumber("ty",0.0);
   double targetArea = table->GetNumber("ta",0.0);
   double targetSkew = table->GetNumber("ts",0.0);
+
+  // SIlly independent motor test
+  int m_testIndex = 0;
+  int testStartButton = 7;
+  int testNextButton = 8;
+  bool m_runTest = false;
+  std::vector<frc::PWMSparkMax*> m_testDrives;
 };
 
 #ifndef RUNNING_FRC_TESTS
