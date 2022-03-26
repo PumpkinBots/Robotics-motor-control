@@ -108,10 +108,28 @@ public:
 
   void AutonomousPeriodic() override
   {
+    // automonomous mode objectives.
+    // 1) shoot pre-loaded ball in top goal (4 points)
+    // 2) drive out of tarmac area (2 points)
+
+    // stage 1.
+    // ** calibration: 1) shooter speed 2) robot start location
+    // a) enable shooter to calibrated speed.
+    // b) enable transport to move ball to shooter.
+    // c) (shot occurs)
+    // d) disable shooter
+    // e) disable shooter
+    // f) move to stage 2
+
+    // stage 2.
+    // ** calibration: 1) time traveled 2) speed traveled
+    // TODO: 2_s and 0.5 speed ends at back wall of field when starting at mid/center
+    // a) driver in reverse for 2 seconds.
+    
     // Drive for 2 seconds
     if (m_timer.Get() < 2_s)
     {
-      // Drive backwards half speed
+      // Drive backwards half  speed
       m_robotDrive.ArcadeDrive(0.5, 0.0);
     }
     else
@@ -135,10 +153,11 @@ public:
     // is also negative. However invert the twist input.
     m_robotDrive.ArcadeDrive(m_stick.GetY(), -m_stick.GetTwist(), true);
 
-    // Check and run the IntakeSubsystem.
+    // Check and run the Subsystems.
     m_intake.RunPeriodic();
     m_launch.RunPeriodic();
     m_transport.RunPeriodic();
+    // TODO: add climber subsystem
 
   }
 
