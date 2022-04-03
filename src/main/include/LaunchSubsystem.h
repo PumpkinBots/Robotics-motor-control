@@ -18,8 +18,9 @@ public:
     void ModeInit();
     // Call this in Periodic() function to check button and set motor.
     bool RunPeriodic();
-
-    bool RunAutonomous();
+    // Call this in Autonomous Periodic() function.
+    // enabled: run the drive if true else stop.
+    bool RunAutonomous(bool enabled);
 
     // Stop the motor and disable run state.
     void StopMotor();

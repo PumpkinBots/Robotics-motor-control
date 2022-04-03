@@ -126,16 +126,30 @@ public:
     // TODO: 2_s and 0.5 speed ends at back wall of field when starting at mid/center
     // a) driver in reverse for 2 seconds.
     
-    // Drive for 2 seconds
+    // Start trying to score immediately.
+    // Drive for 2_s after 5_s have passed.
     if (m_timer.Get() < 7_s)
     {
-      m_launch.RunAutonomous();
-      if (m_timer.Get() > 3_s && m_timer.Get() < 5_s)
+      if (m_timer.Get() < 5_s)
       {
-        m_transport.RunAutonomous();
+        // Begin sttionary.
+        m_robotDrive.ArcadeDrive(0.0, 0.0);
+        // Start spinning the launch wheel immediately and continue for 5_s.
+        m_launch.RunAutonomous(true);
+        // Start moving the ball into the launcher starting at 3_s.
+        if (m_timer.Get() >= 3_s)
+        {
+          m_transport.RunAutonomous(true);
+        }
+        else
+        {
+          m_transport.RunAutonomous(false);
+        }
       }
-      if (m_timer.Get() >= 5_s)
+      else // after 5_s stop trying to shoot the cargo and start driving.
       {
+        m_launch.RunAutonomous(false);
+        m_transport.RunAutonomous(false);
         m_robotDrive.ArcadeDrive(0.65, 0.0);
       }
     }
@@ -143,6 +157,8 @@ public:
     {
       // Stop robot
       m_robotDrive.ArcadeDrive(0.0, 0.0);
+      m_launch.RunAutonomous(false);
+      m_transport.RunAutonomous(false);
     }
   }
 

@@ -69,19 +69,19 @@ void TransportSubsystem::RobotInit()
     frc::SmartDashboard::PutBoolean("Run Transport", false);
 }
 
-bool TransportSubsystem::RunAutonomous()
+bool TransportSubsystem::RunAutonomous(bool enabled)
 {
-    // Toggle Transport state on button press.
-    bool runTransport = m_stick.GetRawButton(m_buttonIndex);
-
-    // Throttle is connected the slider on the controller.
-    // The throttle axis reads -1.0 when pressed forward.
-      m_transportDrive.Set(-m_stick.GetThrottle());
+  if (enabled)
+  {
+    m_transportDrive.Set(-m_stick.GetThrottle());
+  } else {
+    m_transportDrive.Set(0);
+  }
 
     // periodically read voltage, temperature, and applied output and publish to SmartDashboard
     frc::SmartDashboard::PutNumber("Transport Output", m_transportDrive.GetAppliedOutput());
-    frc::SmartDashboard::PutBoolean("Run Transport", runTransport);
-    return runTransport;
+    frc::SmartDashboard::PutBoolean("Run Transport", enabled);
+    return enabled;
 }
 
 bool TransportSubsystem::RunPeriodic()

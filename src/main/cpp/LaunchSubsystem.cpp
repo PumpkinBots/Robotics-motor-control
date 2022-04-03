@@ -60,19 +60,21 @@ void LaunchSubsystem::RobotInit()
     frc::SmartDashboard::PutNumber("Launch RPM", m_launchEncoder.GetVelocity());
 }
 
-bool LaunchSubsystem::RunAutonomous()
+bool LaunchSubsystem::RunAutonomous(bool enabled)
 {
 
-    // Throttle is connected the slider on the controller.
-    // The throttle axis reads -1.0 when pressed forward.
-    // Launch motor is inverted from launch motor.
-      m_launchDrive.Set(-m_stick.GetThrottle());
- 
+  if (enabled)
+  {
+    m_launchDrive.Set(-m_stick.GetThrottle());
+  } else {
+    m_launchDrive.Set(0);
+  }
+
     // periodically read voltage, temperature, and applied output and publish to SmartDashboard
     frc::SmartDashboard::PutNumber("Launch Output", m_launchDrive.GetAppliedOutput());
     frc::SmartDashboard::PutNumber("Launch RPM", m_launchEncoder.GetVelocity());
-    frc::SmartDashboard::PutBoolean("Run Launch", m_runLaunch);
-    return m_runLaunch;
+    frc::SmartDashboard::PutBoolean("Run Launch", enabled);
+    return enabled;
 }
 
 bool LaunchSubsystem::RunPeriodic()
