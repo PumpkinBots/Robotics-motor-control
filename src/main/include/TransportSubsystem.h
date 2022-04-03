@@ -19,6 +19,8 @@ public:
     // Call this in Periodic() function to check button and set motor.
     bool RunPeriodic();
 
+    bool RunAutonomous();
+
     // Stop the motor and disable run state.
     void StopMotor();
 

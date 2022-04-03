@@ -92,8 +92,6 @@ bool IntakeSubsystem::RunPeriodic()
       m_intakeDrive.Set(0);
     }
     // periodically read voltage, temperature, and applied output and publish to SmartDashboard
-    frc::SmartDashboard::PutNumber("Intake Voltage", m_intakeDrive.GetBusVoltage());
-    frc::SmartDashboard::PutNumber("Intake Temperature", m_intakeDrive.GetMotorTemperature());
     frc::SmartDashboard::PutNumber("Intake Output", m_intakeDrive.GetAppliedOutput());
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
     frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());

@@ -127,10 +127,17 @@ public:
     // a) driver in reverse for 2 seconds.
     
     // Drive for 2 seconds
-    if (m_timer.Get() < 2_s)
+    if (m_timer.Get() < 7_s)
     {
-      // Drive backwards half  speed
-      m_robotDrive.ArcadeDrive(0.5, 0.0);
+      m_launch.RunAutonomous();
+      if (m_timer.Get() > 3_s && m_timer.Get() < 5_s)
+      {
+        m_transport.RunAutonomous();
+      }
+      if (m_timer.Get() >= 5_s)
+      {
+        m_robotDrive.ArcadeDrive(0.65, 0.0);
+      }
     }
     else
     {

@@ -47,16 +47,6 @@ void LaunchSubsystem::RobotInit()
       frc::SmartDashboard::PutString("Launch Idle Mode", "Error");
     }
 
-    /**
-     * Similarly, parameters will have a Get method which allows you to retrieve their values
-     * from the controller
-     */
-    if(m_launchDrive.GetIdleMode() == rev::CANSparkMax::IdleMode::kCoast) {
-      frc::SmartDashboard::PutString("Launch Idle Mode", "Coast");
-    } else {
-      frc::SmartDashboard::PutString("Launch Idle Mode", "Brake");
-    }
-
     // Set ramp rate to 0
     if(m_launchDrive.SetOpenLoopRampRate(0) != rev::REVLibError::kOk) {
       frc::SmartDashboard::PutString("Launch Ramp Rate", "Error");
@@ -66,9 +56,24 @@ void LaunchSubsystem::RobotInit()
     frc::SmartDashboard::PutNumber("Launch Ramp Rate", m_launchDrive.GetOpenLoopRampRate());
 
     // Display local member values.
-    frc::SmartDashboard::PutBoolean("Run launch", m_runLaunch);
+    frc::SmartDashboard::PutBoolean("Run Launch", m_runLaunch);
+    frc::SmartDashboard::PutNumber("Launch RPM", m_launchEncoder.GetVelocity());
 }
 
+bool LaunchSubsystem::RunAutonomous()
+{
+
+    // Throttle is connected the slider on the controller.
+    // The throttle axis reads -1.0 when pressed forward.
+    // Launch motor is inverted from launch motor.
+      m_launchDrive.Set(-m_stick.GetThrottle());
+ 
+    // periodically read voltage, temperature, and applied output and publish to SmartDashboard
+    frc::SmartDashboard::PutNumber("Launch Output", m_launchDrive.GetAppliedOutput());
+    frc::SmartDashboard::PutNumber("Launch RPM", m_launchEncoder.GetVelocity());
+    frc::SmartDashboard::PutBoolean("Run Launch", m_runLaunch);
+    return m_runLaunch;
+}
 
 bool LaunchSubsystem::RunPeriodic()
 {
@@ -88,9 +93,8 @@ bool LaunchSubsystem::RunPeriodic()
       m_launchDrive.Set(0);
     }
     // periodically read voltage, temperature, and applied output and publish to SmartDashboard
-    frc::SmartDashboard::PutNumber("Launch Voltage", m_launchDrive.GetBusVoltage());
-    frc::SmartDashboard::PutNumber("Launch Temperature", m_launchDrive.GetMotorTemperature());
     frc::SmartDashboard::PutNumber("Launch Output", m_launchDrive.GetAppliedOutput());
+    frc::SmartDashboard::PutNumber("Launch RPM", m_launchEncoder.GetVelocity());
     frc::SmartDashboard::PutBoolean("Run Launch", m_runLaunch);
     return m_runLaunch;
 }
