@@ -65,7 +65,9 @@ bool LaunchSubsystem::RunAutonomous(bool enabled)
 
   if (enabled)
   {
-    m_launchDrive.Set(-m_stick.GetThrottle());
+    // m_launchDrive.Set(-m_stick.GetThrottle());
+    // Super-awesome calibration.
+    m_launchDrive.Set(0.687);
   } else {
     m_launchDrive.Set(0);
   }

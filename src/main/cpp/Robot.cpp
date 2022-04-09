@@ -132,8 +132,14 @@ public:
     {
       if (m_timer.Get() < 5_s)
       {
-        // Begin sttionary.
-        m_robotDrive.ArcadeDrive(0.0, 0.0);
+        if (m_timer.Get() < 0.5_s)
+        {
+          m_robotDrive.ArcadeDrive(0.65, 0.0);
+        }
+        else
+        {
+          m_robotDrive.ArcadeDrive(0.0, 0.0);
+        }
         // Start spinning the launch wheel immediately and continue for 5_s.
         m_launch.RunAutonomous(true);
         // Start moving the ball into the launcher starting at 3_s.

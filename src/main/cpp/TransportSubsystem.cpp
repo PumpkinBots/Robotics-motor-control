@@ -73,7 +73,9 @@ bool TransportSubsystem::RunAutonomous(bool enabled)
 {
   if (enabled)
   {
-    m_transportDrive.Set(-m_stick.GetThrottle());
+    // m_transportDrive.Set(-m_stick.GetThrottle());
+    // Super-awesome calibration.
+    m_transportDrive.Set(0.8);
   } else {
     m_transportDrive.Set(0);
   }
