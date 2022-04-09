@@ -30,8 +30,7 @@
 #include "networktables/NetworkTableValue.h"
 #include "wpi/span.h"
 
-#include <frc/filter/SlewRateLimiter.h>
-
+#include <units/dimensionless.h>
 #include <frc/filter/SlewRateLimiter.h>
 
 /**
@@ -171,6 +170,7 @@ public:
   void TeleopInit() override 
   {
     m_robotDrive.StopMotor();
+    m_turnRateLimiter.Reset(0);
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
@@ -180,7 +180,8 @@ public:
   {
     // Y-axis is negative pushed forward, and now the drive forward
     // is also negative. However invert the twist input.
-    m_robotDrive.ArcadeDrive(m_stick.GetY(), -m_stick.GetTwist(), true);
+    // m_robotDrive.ArcadeDrive(m_stick.GetY(), m_turnRateLimiter.Calculate(-m_stick.GetTwist()), true);
+    m_robotDrive.ArcadeDrive(m_stick.GetY(), -m_stick.GetTwist(), false);
 
     // Check and run the Subsystems.
     m_intake.RunPeriodic();
@@ -241,6 +242,7 @@ private:
   frc::DifferentialDrive m_robotDrive{m_leftLeader, m_rightLeader};
 
   frc::Joystick m_stick{0};
+  frc::SlewRateLimiter<units::scalar> m_turnRateLimiter{1 / 1_s, 0};
   frc::Timer m_timer;
 
   rev::CANSparkMax m_transportDrive{kTransportDeviceID, rev::CANSparkMax::MotorType::kBrushless};
