@@ -5,3 +5,4 @@
  */
 
 extern const char *GetRobotVersion();
+extern const char *GetBuildInfo();

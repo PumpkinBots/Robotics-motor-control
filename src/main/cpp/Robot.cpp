@@ -92,6 +92,10 @@ public:
     std::string gitVersion = GetRobotVersion();
     fmt::print("Version: {}\n", gitVersion);
     frc::SmartDashboard::PutString("Robot Code Git Version", gitVersion);
+
+    std::string buildInfo = GetBuildInfo();
+    fmt::print("Build Info: {}\n", buildInfo);
+    frc::SmartDashboard::PutString("Robot Build Info", buildInfo);
   }
 
   void AutonomousInit() override
