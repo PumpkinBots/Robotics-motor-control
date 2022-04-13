@@ -53,7 +53,7 @@ task generateCppVersion() {
         if (robotVersionFileOutput.exists()) {
             robotVersionFileOutput.delete()
         }
-        def read = robotVersionFileInput.text.replace('${robot_version}', verStr).replace('${build_info}', buildStr)
+        def read = robotVersionFileInput.text.replace('${robot_version}', verStr).replace('${build_info}', buildStr).replace('\\', '\\\\')
         robotVersionFileOutput.write(read)
     }
 }
