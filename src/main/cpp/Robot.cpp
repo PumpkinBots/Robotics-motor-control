@@ -258,6 +258,7 @@ private:
   frc::DifferentialDrive m_robotDrive{m_leftLeader, m_rightLeader};
 
   frc::Joystick m_stick{0};
+  frc::XboxController m_xbox{1};
   frc::SlewRateLimiter<units::scalar> m_turnRateLimiter{1 / 1_s, 0};
   frc::Timer m_timer;
 
