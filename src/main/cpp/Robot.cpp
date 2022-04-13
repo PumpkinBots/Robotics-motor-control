@@ -9,6 +9,7 @@
 #include <fmt/core.h>
 #include <frc/Filesystem.h>
 #include <frc/Joystick.h>
+#include <frc/XboxController.h>
 #include <frc/TimedRobot.h>
 #include <frc/Timer.h>
 #include <frc/drive/DifferentialDrive.h>
@@ -189,6 +190,7 @@ public:
     m_intake.RunPeriodic();
     m_launch.RunPeriodic();
     m_transport.RunPeriodic();
+    m_intakeRetraction.RunPeriodic();
     // TODO: add climber subsystem
 
   }
@@ -270,7 +272,7 @@ private:
   double targetArea = table->GetNumber("ta",0.0);
   double targetSkew = table->GetNumber("ts",0.0);
 
-  // SIlly independent motor test
+  // Silly independent motor test
   int m_testIndex = 0;
   int testStartButton = 7;
   int testNextButton = 8;
