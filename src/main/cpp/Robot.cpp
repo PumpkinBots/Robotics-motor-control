@@ -24,6 +24,7 @@
 #include "TransportSubsystem.h"
 #include "HardwareIDs.h"
 #include "RobotVersion.h"
+#include "ClimbSubsystem.h"
 
 #include "networktables/NetworkTable.h"
 #include "frc/smartdashboard/SmartDashboard.h"
@@ -70,6 +71,8 @@ public:
     m_intake.RobotInit();
     m_launch.RobotInit();
     m_transport.RobotInit();
+    m_intakeRetraction.RobotInit();
+    m_climb.RobotInit();
     
 
     // Read the build version from the deploy directory.
@@ -103,6 +106,8 @@ public:
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
+    m_intakeRetraction.ModeInit();
+    m_climb.ModeInit();
 
     m_timer.Reset();
     m_timer.Start();
@@ -177,6 +182,8 @@ public:
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
+    m_intakeRetraction.ModeInit();
+    m_climb.ModeInit();
   }
 
   void TeleopPeriodic() override
@@ -191,6 +198,7 @@ public:
     m_launch.RunPeriodic();
     m_transport.RunPeriodic();
     m_intakeRetraction.RunPeriodic();
+    m_climb.RunPeriodic();
     // TODO: add climber subsystem
 
   }
@@ -202,6 +210,8 @@ public:
     m_intake.ModeInit();
     m_launch.ModeInit();
     m_transport.ModeInit();
+    m_intakeRetraction.ModeInit();
+    m_climb.ModeInit();
 
     m_testIndex = 0;
     m_stick.GetRawButtonPressed(testStartButton);
@@ -218,6 +228,8 @@ public:
     m_intake.RunPeriodic();
     m_launch.RunPeriodic();
     m_transport.RunPeriodic();
+    m_intakeRetraction.RunPeriodic();
+    m_climb.RunPeriodic();
 
   frc::SmartDashboard::PutNumber("AAindex", m_testIndex);
   if (m_stick.GetRawButtonPressed(testStartButton)) {
@@ -253,6 +265,7 @@ private:
   rev::CANSparkMax m_launchDrive{kLaunchDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_intakeRetractionDrive{kIntakeRetractionDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_climbDrive{kclimbDeviceID, rev::CANSparkMax::MotorType::kBrushless};
 
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
@@ -262,8 +275,11 @@ private:
   LaunchSubsystem m_launch{kLaunchButton, m_launchDrive, m_stick};
   // Bind the transport on/off to joystick button 1, the trigger.
   TransportSubsystem m_transport{kTransportButton, m_transportDrive, m_stick};
-  //
+  // Bind the intake retraction on/off to joytsick button 4.
   IntakeRetractionSubsystem m_intakeRetraction{kIntakeRetractionButton, m_intakeRetractionDrive, m_stick};
+  // Bind the
+  ClimbSubsystem m_climb{kClimbButton, m_climbDrive, m_stick};
+
 
   // Allow the robot to access the data from the camera. 
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
