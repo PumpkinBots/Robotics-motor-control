@@ -17,6 +17,7 @@
 
 
 #include "rev/CANSparkMax.h"
+#include "IntakeRetractionSubsystem.h"
 #include "IntakeSubsystem.h"
 #include "LaunchSubsystem.h"
 #include "TransportSubsystem.h"
@@ -68,6 +69,7 @@ public:
     m_intake.RobotInit();
     m_launch.RobotInit();
     m_transport.RobotInit();
+    
 
     // Read the build version from the deploy directory.
     // https://docs.wpilib.org/en/stable/docs/software/advanced-gradlerio/deploy-git-data.html
@@ -248,6 +250,7 @@ private:
   rev::CANSparkMax m_transportDrive{kTransportDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_launchDrive{kLaunchDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_intakeRetractionDrive{kIntakeRetractionDeviceID, rev::CANSparkMax::MotorType::kBrushless};
 
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
@@ -257,6 +260,8 @@ private:
   LaunchSubsystem m_launch{kLaunchButton, m_launchDrive, m_stick};
   // Bind the transport on/off to joystick button 1, the trigger.
   TransportSubsystem m_transport{kTransportButton, m_transportDrive, m_stick};
+  //
+  IntakeRetractionSubsystem m_intakeRetraction{kIntakeRetractionButton, m_intakeRetractionDrive, m_stick};
 
   // Allow the robot to access the data from the camera. 
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
