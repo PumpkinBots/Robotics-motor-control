@@ -12,7 +12,6 @@ static constexpr int kLaunchDeviceID = 5; // Spark for launcher motor
 static constexpr int kTransportDeviceID = 6; // Spark for transport motor
 static constexpr int kIntakeDeviceID = 7;  // Spark for intake motor
 
-
 static constexpr int kDriveLeftLeader = 8;
 static constexpr int kDriveLeftFollower = 9;
 static constexpr int kDriveRightLeader = 10;
