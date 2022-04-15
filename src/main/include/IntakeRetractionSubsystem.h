@@ -1,13 +1,11 @@
 #pragma once
 
-#include <frc/Joystick.h>
 #include <frc/XboxController.h>
 #include "rev/CANSparkMax.h"
 
 class IntakeRetractionSubsystem {
 public:
     IntakeRetractionSubsystem(
-        int enableButtonIndex,
         rev::CANSparkMax& intakeRetractionDrive,
         frc::XboxController& xbox
     );
@@ -25,7 +23,6 @@ public:
 public:
     // These are for tests an inspection.
     bool isEnabled() const {return m_runIntakeRetraction;}
-    int buttonIndex() const {return m_buttonIndex;}
 
     bool SetEnable(bool value)
     {
@@ -35,7 +32,6 @@ public:
 
 private:
     bool m_runIntakeRetraction;
-    const int m_buttonIndex;
     // Non-owning reference to the motor controller.
     rev::CANSparkMax& m_intakeRetractionDrive;
     // Non-owning reference to the joystick.

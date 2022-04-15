@@ -3,12 +3,10 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 IntakeRetractionSubsystem::IntakeRetractionSubsystem(
-        int enableButtonIndex,
         rev::CANSparkMax& intakeRetractionDrive,
         frc::XboxController& xbox
 ) :
     m_runIntakeRetraction(false),
-    m_buttonIndex(enableButtonIndex),
     m_intakeRetractionDrive{intakeRetractionDrive},
     m_xbox{xbox}
 {
@@ -70,14 +68,14 @@ void IntakeRetractionSubsystem::RobotInit()
     frc::SmartDashboard::PutNumber("Intake Ramp Rate", m_intakeRetractionDrive.GetOpenLoopRampRate());
 
     // Display local member values.
-    frc::SmartDashboard::PutBoolean("Run Intake", m_runIntakeRetraction);
+    frc::SmartDashboard::PutBoolean("Run Intake Retraction", m_runIntakeRetraction);
 }
 
 
 bool IntakeRetractionSubsystem::RunPeriodic()
 {
     // Toggle Transport state on button press.
-    bool runIntakeRetraction = m_xbox.GetLeftBumperPressed();
+    bool runIntakeRetraction = m_xbox.GetAButton();
     if (runIntakeRetraction)
     {
     // Throttle is connected the slider on the controller.
@@ -86,7 +84,9 @@ bool IntakeRetractionSubsystem::RunPeriodic()
     } else {
       m_intakeRetractionDrive.Set(0);
     }
+    frc::SmartDashboard::PutBoolean("Run Intake Retraction", m_runIntakeRetraction);
     frc::SmartDashboard::PutNumber("Launch RPM", m_intakeRetractionEncoder.GetVelocity());
+  
     return runIntakeRetraction;
 }
 

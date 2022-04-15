@@ -201,7 +201,91 @@ public:
     m_climb.RunPeriodic();
     // TODO: add climber subsystem
 
+    // Toggle Transport state on button press.
+    bool runIntakeRetractionDown = m_xbox.GetLeftBumper();
+    if (runIntakeRetractionDown)
+    {
+    // Throttle is connected the slider on the controller.
+    // The throttle axis reads -1.0 when pressed forward.
+      m_intakeRetractionDrive.Set(-1.0);
+    } else {
+      m_intakeRetractionDrive.Set(0);
+    }
+    frc::SmartDashboard::PutBoolean("Run Intake Retraction Down", runIntakeRetractionDown);
+
+    bool runIntakeRetractionUp = m_xbox.GetRightBumper();
+    if (runIntakeRetractionUp)
+    {
+    // Throttle is connected the slider on the controller.
+    // The throttle axis reads -1.0 when pressed forward.
+      m_intakeRetractionDrive.Set(1.0);
+    } else {
+      m_intakeRetractionDrive.Set(0);
+    }
+    frc::SmartDashboard::PutBoolean("Run Intake Retraction Up", runIntakeRetractionUp);
+
+    bool runClimberLeft;
+    if (m_xbox.GetYButton())
+    {
+      runClimberLeft = !runClimberLeft;
+    }
+    if (runClimberLeft)
+    {
+      m_climbDrive.Set(m_xbox.GetLeftY());
+    } else {
+      m_climbDrive.Set(0.0);
+    }
+    frc::SmartDashboard::PutBoolean("Run Left Climber", runClimberLeft);
+
+    bool runIntakeXbox;
+    if (m_xbox.GetLeftTriggerAxis() > 0){
+      runIntakeXbox = true;
+    } else {
+      runIntakeXbox = false;
+    }
+    if (runIntakeXbox)
+    {
+    // Throttle is connected the slider on the controller.
+    // The throttle axis reads -1.0 when pressed forward.
+      m_intakeDrive.Set(0.8);
+    } else {
+      m_intakeDrive.Set(0);
+    }
+    frc::SmartDashboard::PutBoolean("Run Intake", runIntakeXbox);  
+
+    bool runTransportXbox;
+    if (m_xbox.GetBButton()){
+      runTransportXbox = true;
+    } else {
+      runTransportXbox = false;
+    }
+    if (runTransportXbox)
+    {
+    // Throttle is connected the slider on the controller.
+    // The throttle axis reads -1.0 when pressed forward.
+      m_transportDrive.Set(0.8);
+    } else {
+      m_transportDrive.Set(0);
+    }
+    frc::SmartDashboard::PutBoolean("Run Transport", runTransportXbox);  
+
+    bool runLaunchXbox;
+    if (m_xbox.GetRightTriggerAxis() > 0){
+      runLaunchXbox = true;
+    } else {
+      runLaunchXbox = false;
+    }
+    if (runLaunchXbox)
+    {
+    // Throttle is connected the slider on the controller.
+    // The throttle axis reads -1.0 when pressed forward.
+      m_launchDrive.Set(0.687);
+    } else {
+      m_launchDrive.Set(0);
+    }
+    frc::SmartDashboard::PutBoolean("Run Launch", runLaunchXbox);  
   }
+
 
   void TestInit() override
   {
@@ -277,7 +361,7 @@ private:
   // Bind the transport on/off to joystick button 1, the trigger.
   TransportSubsystem m_transport{kTransportButton, m_transportDrive, m_stick};
   // Bind the intake retraction on/off to joytsick button 4.
-  IntakeRetractionSubsystem m_intakeRetraction{kIntakeRetractionButton, m_intakeRetractionDrive, m_xbox};
+  IntakeRetractionSubsystem m_intakeRetraction{m_intakeRetractionDrive, m_xbox};
   // Bind the
   ClimbSubsystem m_climb{kClimbButton, m_climbDrive, m_stick};
 
