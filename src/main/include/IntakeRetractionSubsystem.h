@@ -20,22 +20,11 @@ public:
     // Stop the motor and disable run state.
     void StopMotor();
 
-public:
-    // These are for tests an inspection.
-    bool isEnabled() const {return m_runIntakeRetraction;}
-
-    bool SetEnable(bool value)
-    {
-        m_runIntakeRetraction = value;
-        return isEnabled();
-    }
-
 private:
-    bool m_runIntakeRetraction;
     // Non-owning reference to the motor controller.
-    rev::CANSparkMax& m_intakeRetractionDrive;
+    rev::CANSparkMax& m_drive;
     // Non-owning reference to the joystick.
     frc::XboxController& m_xbox;
     // Encoder object created to display velocity values
-    rev::SparkMaxRelativeEncoder m_intakeRetractionEncoder = m_intakeRetractionDrive.GetEncoder();
+    rev::SparkMaxRelativeEncoder m_intakeRetractionEncoder = m_drive.GetEncoder();
 };

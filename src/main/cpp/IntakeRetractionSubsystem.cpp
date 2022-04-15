@@ -6,11 +6,10 @@ IntakeRetractionSubsystem::IntakeRetractionSubsystem(
         rev::CANSparkMax& intakeRetractionDrive,
         frc::XboxController& xbox
 ) :
-    m_runIntakeRetraction(false),
-    m_intakeRetractionDrive{intakeRetractionDrive},
+    m_drive{intakeRetractionDrive},
     m_xbox{xbox}
 {
-  m_intakeRetractionDrive.RestoreFactoryDefaults();
+  m_drive.RestoreFactoryDefaults();
 }
 
 
@@ -20,9 +19,6 @@ void IntakeRetractionSubsystem::ModeInit()
     // made while the robot was disabled.
 
     StopMotor();
-    // Display local member values.
-    frc::SmartDashboard::PutBoolean("Run Intake", m_runIntakeRetraction);
-
 }
 
 // This is mostly copied from SPARK-MAX-Examples/C++/Get and Set Parameters
@@ -33,7 +29,7 @@ void IntakeRetractionSubsystem::RobotInit()
      * in the SPARK MAX to their factory default state. If no argument is passed, these
      * parameters will not persist between power cycles
      */
-    m_intakeRetractionDrive.RestoreFactoryDefaults();
+    m_drive.RestoreFactoryDefaults();
 
     /**
      * Parameters can be set by calling the appropriate Set method on the CANSparkMax object
@@ -45,54 +41,42 @@ void IntakeRetractionSubsystem::RobotInit()
      *  REVLibError::kError
      *  REVLibError::kTimeout
      */
-    if(m_intakeRetractionDrive.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast) != rev::REVLibError::kOk) {
-      frc::SmartDashboard::PutString("Intake Idle Mode", "Error");
-    }
-
-    /**
-     * Similarly, parameters will have a Get method which allows you to retrieve their values
-     * from the controller
-     */
-    if(m_intakeRetractionDrive.GetIdleMode() == rev::CANSparkMax::IdleMode::kCoast) {
-      frc::SmartDashboard::PutString("Intake Idle Mode", "Coast");
-    } else {
-      frc::SmartDashboard::PutString("Intake Idle Mode", "Brake");
+    if(m_drive.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake) != rev::REVLibError::kOk) {
+      frc::SmartDashboard::PutString("Intake Retraction Idle Mode", "Error");
     }
 
     // Set ramp rate to 0
-    if(m_intakeRetractionDrive.SetOpenLoopRampRate(0) != rev::REVLibError::kOk) {
-      frc::SmartDashboard::PutString("Intake Ramp Rate", "Error");
+    if(m_drive.SetOpenLoopRampRate(0) != rev::REVLibError::kOk) {
+      frc::SmartDashboard::PutString("Intake Retraction Ramp Rate", "Error");
     }
-
-    // read back ramp rate value
-    frc::SmartDashboard::PutNumber("Intake Ramp Rate", m_intakeRetractionDrive.GetOpenLoopRampRate());
-
-    // Display local member values.
-    frc::SmartDashboard::PutBoolean("Run Intake Retraction", m_runIntakeRetraction);
 }
 
 
 bool IntakeRetractionSubsystem::RunPeriodic()
 {
     // Toggle Transport state on button press.
-    bool runIntakeRetraction = m_xbox.GetAButton();
-    if (runIntakeRetraction)
-    {
-    // Throttle is connected the slider on the controller.
-    // The throttle axis reads -1.0 when pressed forward.
-      m_intakeRetractionDrive.Set(0.8);
+    bool runArmDown = m_xbox.GetLeftBumper();
+    bool runArmUp = m_xbox.GetRightBumper();
+    bool doRun = false;
+    if (runArmDown && runArmUp) {
+      // Input error, do nothing.
+      m_drive.Set(0);
+    } else if (runArmUp) {
+      doRun = true;
+      m_drive.Set(1.0);
+    } else if (runArmDown) {
+      doRun = true;
+      m_drive.Set(-1.0);
     } else {
-      m_intakeRetractionDrive.Set(0);
+      m_drive.Set(0);
     }
-    frc::SmartDashboard::PutBoolean("Run Intake Retraction", m_runIntakeRetraction);
-    frc::SmartDashboard::PutNumber("Launch RPM", m_intakeRetractionEncoder.GetVelocity());
+    frc::SmartDashboard::PutNumber("Intake Retraction RPM", m_intakeRetractionEncoder.GetVelocity());
   
-    return runIntakeRetraction;
+    return doRun;
 }
 
 
 void IntakeRetractionSubsystem::StopMotor()
 {
-    m_runIntakeRetraction = false;
-    m_intakeRetractionDrive.StopMotor();
+    m_drive.StopMotor();
 }

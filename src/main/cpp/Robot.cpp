@@ -173,6 +173,8 @@ public:
       m_launch.RunAutonomous(false);
       m_transport.RunAutonomous(false);
     }
+    m_intakeRetraction.StopMotor();
+    m_climb.StopMotor();
   }
 
   void TeleopInit() override 
@@ -199,8 +201,7 @@ public:
     m_transport.RunPeriodic();
     m_intakeRetraction.RunPeriodic();
     m_climb.RunPeriodic();
-    // TODO: add climber subsystem
-
+#if 0
     // Toggle Transport state on button press.
     bool runIntakeRetractionDown = m_xbox.GetLeftBumper();
     if (runIntakeRetractionDown)
@@ -284,6 +285,7 @@ public:
       m_launchDrive.Set(0);
     }
     frc::SmartDashboard::PutBoolean("Run Launch", runLaunchXbox);  
+#endif
   }
 
 
