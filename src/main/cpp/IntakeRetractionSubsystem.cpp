@@ -5,12 +5,12 @@
 IntakeRetractionSubsystem::IntakeRetractionSubsystem(
         int enableButtonIndex,
         rev::CANSparkMax& intakeRetractionDrive,
-        frc::Joystick& stick
+        frc::XboxController& xbox
 ) :
     m_runIntakeRetraction(false),
     m_buttonIndex(enableButtonIndex),
     m_intakeRetractionDrive{intakeRetractionDrive},
-    m_stick{stick}
+    m_xbox{xbox}
 {
   m_intakeRetractionDrive.RestoreFactoryDefaults();
 }
@@ -20,12 +20,10 @@ void IntakeRetractionSubsystem::ModeInit()
 {
     // Call GetRawButtonPressed to discard any button presses
     // made while the robot was disabled.
-    m_stick.GetRawButtonPressed(m_buttonIndex);
 
     StopMotor();
     // Display local member values.
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntakeRetraction);
-    frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
 
 }
 
@@ -73,19 +71,18 @@ void IntakeRetractionSubsystem::RobotInit()
 
     // Display local member values.
     frc::SmartDashboard::PutBoolean("Run Intake", m_runIntakeRetraction);
-    frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
 }
 
 
 bool IntakeRetractionSubsystem::RunPeriodic()
 {
     // Toggle Transport state on button press.
-    bool runIntakeRetraction = m_stick.GetRawButton(m_buttonIndex);
+    bool runIntakeRetraction = m_xbox.GetLeftBumperPressed();
     if (runIntakeRetraction)
     {
     // Throttle is connected the slider on the controller.
     // The throttle axis reads -1.0 when pressed forward.
-      m_intakeRetractionDrive.Set(m_stick.GetThrottle());
+      m_intakeRetractionDrive.Set(0.8);
     } else {
       m_intakeRetractionDrive.Set(0);
     }

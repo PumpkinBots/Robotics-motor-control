@@ -1,7 +1,7 @@
 #pragma once
 
 #include <frc/Joystick.h>
-
+#include <frc/XboxController.h>
 #include "rev/CANSparkMax.h"
 
 class IntakeRetractionSubsystem {
@@ -9,7 +9,7 @@ public:
     IntakeRetractionSubsystem(
         int enableButtonIndex,
         rev::CANSparkMax& intakeRetractionDrive,
-        frc::Joystick& stick
+        frc::XboxController& xbox
     );
 
     // Initialize the subsystem from Robot::RobotInit().
@@ -39,7 +39,7 @@ private:
     // Non-owning reference to the motor controller.
     rev::CANSparkMax& m_intakeRetractionDrive;
     // Non-owning reference to the joystick.
-    frc::Joystick& m_stick;
+    frc::XboxController& m_xbox;
     // Encoder object created to display velocity values
     rev::SparkMaxRelativeEncoder m_intakeRetractionEncoder = m_intakeRetractionDrive.GetEncoder();
 };
