@@ -5,3 +5,7 @@
 const char* GetRobotVersion() {
   return "${robot_version}";
 }
+
+const char* GetBuildInfo() {
+  return "${build_info}";
+}

@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat;
+
 plugins {
     id "cpp"
     id "google-test-test-suite"
@@ -12,12 +14,21 @@ def robotVersionFileInput = file("src/generate/RobotVersion.cpp.in")
 def robotVersionFileOutput = file("$buildDir/generated/cpp/RobotVersion.cpp")
 def generatedOutputDir = file("$buildDir/generated/cpp")
 
+def buildTime() {
+    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") // you can change it
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
+
 task generateCppVersion() {
     description = 'Generates the robot version class'
     def details = versionDetails()
     def dirty = ''
+    def buildTime = buildTime()
+    def hostname = InetAddress.getLocalHost().getCanonicalHostName()
     // Use GString with a closure to capture the dirty status.
     def verStr = "${details.lastTag} on ${details.branchName} at ${details.gitHash}${-> dirty}"
+    def buildStr = "Built on ${buildTime} by ${hostname}:${projectDir}"
 
     if (!details.isCleanTag) {
         dirty = '.dirty'
@@ -32,6 +43,9 @@ task generateCppVersion() {
         println "gitHashFull: ${details.gitHashFull}"
         println "branchName: ${details.branchName}"
         println "isCleanTag: ${details.isCleanTag}"
+        println "projectDir: ${projectDir}"
+        println "build time: ${buildTime}"
+        println "hostname: ${hostname}"
 
         // Make sure the output directory exists or the task fails.
         generatedOutputDir.mkdirs()
@@ -39,7 +53,7 @@ task generateCppVersion() {
         if (robotVersionFileOutput.exists()) {
             robotVersionFileOutput.delete()
         }
-        def read = robotVersionFileInput.text.replace('${robot_version}', verStr)
+        def read = robotVersionFileInput.text.replace('${robot_version}', verStr).replace('${build_info}', buildStr).replace('\\', '\\\\')
         robotVersionFileOutput.write(read)
     }
 }
