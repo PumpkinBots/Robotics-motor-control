@@ -184,7 +184,7 @@ public:
     // Y-axis is negative pushed forward, and now the drive forward
     // is also negative. However invert the twist input.
     // m_robotDrive.ArcadeDrive(m_stick.GetY(), m_turnRateLimiter.Calculate(-m_stick.GetTwist()), true);
-    m_robotDrive.ArcadeDrive(m_stick.GetY(), -m_stick.GetTwist(), false);
+    m_robotDrive.ArcadeDrive(m_stick.GetY(), (0.5)*-m_stick.GetTwist(), false);
 
     // Check and run the Subsystems.
     m_intake.RunPeriodic();
