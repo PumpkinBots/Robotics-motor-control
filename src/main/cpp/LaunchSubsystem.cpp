@@ -80,7 +80,7 @@ bool LaunchSubsystem::RunAutonomous(bool enabled)
 bool LaunchSubsystem::RunPeriodic()
 {
     // Toggle Launch state on button press.
-    if (m_xbox.GetAButton())
+    if (m_xbox.GetAButtonPressed())
     {
       m_runLaunch = !m_runLaunch;
     }
