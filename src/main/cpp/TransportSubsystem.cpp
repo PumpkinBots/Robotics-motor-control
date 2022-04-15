@@ -3,13 +3,11 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 TransportSubsystem::TransportSubsystem(
-        int enableButtonIndex,
         rev::CANSparkMax& TransportDrive,
-        frc::Joystick& stick
+        frc::XboxController& stick
 ) :
-    m_buttonIndex(enableButtonIndex),
     m_transportDrive{TransportDrive},
-    m_stick{stick}
+    m_xbox{stick}
 {
   m_transportDrive.RestoreFactoryDefaults();
 }
@@ -19,7 +17,6 @@ void TransportSubsystem::ModeInit()
 {
     // Call GetRawButtonPressed to discard any button presses
     // made while the robot was disabled.
-    m_stick.GetRawButtonPressed(m_buttonIndex);
     StopMotor();
 }
 
@@ -80,7 +77,7 @@ bool TransportSubsystem::RunAutonomous(bool enabled)
     m_transportDrive.Set(0);
   }
 
-    // periodically read voltage, temperature, and applied output and publish to SmartDashboard
+    // periodically read applied output and publish to SmartDashboard
     frc::SmartDashboard::PutNumber("Transport Output", m_transportDrive.GetAppliedOutput());
     frc::SmartDashboard::PutBoolean("Run Transport", enabled);
     return enabled;
@@ -88,17 +85,16 @@ bool TransportSubsystem::RunAutonomous(bool enabled)
 
 bool TransportSubsystem::RunPeriodic()
 {
-    // Toggle Transport state on button press.
-    bool runTransport = m_stick.GetRawButton(m_buttonIndex);
+    // Run Transport on momentary button press.
+    // The triggers return [0,1], so ignore small values.
+    bool runTransport = m_xbox.GetRightTriggerAxis() > 0.1;
     if (runTransport)
     {
-    // Throttle is connected the slider on the controller.
-    // The throttle axis reads -1.0 when pressed forward.
-      m_transportDrive.Set(-m_stick.GetThrottle());
+      m_transportDrive.Set(0.65);
     } else {
       m_transportDrive.Set(0);
     }
-    // periodically read voltage, temperature, and applied output and publish to SmartDashboard
+    // periodically read applied output and publish to SmartDashboard
     frc::SmartDashboard::PutNumber("Transport Output", m_transportDrive.GetAppliedOutput());
     frc::SmartDashboard::PutBoolean("Run Transport", runTransport);
     return runTransport;

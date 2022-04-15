@@ -3,14 +3,12 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 LaunchSubsystem::LaunchSubsystem(
-        int enableButtonIndex,
         rev::CANSparkMax& launchDrive,
-        frc::Joystick& stick
+        frc::XboxController& stick
 ) :
     m_runLaunch(false),
-    m_buttonIndex(enableButtonIndex),
     m_launchDrive{launchDrive},
-    m_stick{stick}
+    m_xbox{stick}
 {
   m_launchDrive.RestoreFactoryDefaults();
 }
@@ -20,7 +18,7 @@ void LaunchSubsystem::ModeInit()
 {
     // Call GetRawButtonPressed to discard any button presses
     // made while the robot was disabled.
-    m_stick.GetRawButtonPressed(m_buttonIndex);
+    m_xbox.GetAButton();
     StopMotor();
 }
 
@@ -82,7 +80,7 @@ bool LaunchSubsystem::RunAutonomous(bool enabled)
 bool LaunchSubsystem::RunPeriodic()
 {
     // Toggle Launch state on button press.
-    if (m_stick.GetRawButtonPressed(m_buttonIndex))
+    if (m_xbox.GetAButton())
     {
       m_runLaunch = !m_runLaunch;
     }
@@ -92,7 +90,7 @@ bool LaunchSubsystem::RunPeriodic()
     // Throttle is connected the slider on the controller.
     // The throttle axis reads -1.0 when pressed forward.
     // Launch motor is inverted from launch motor.
-      m_launchDrive.Set(-m_stick.GetThrottle());
+      m_launchDrive.Set(0.687);
     } else {
       m_launchDrive.Set(0);
     }

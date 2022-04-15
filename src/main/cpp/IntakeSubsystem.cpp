@@ -3,14 +3,11 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 IntakeSubsystem::IntakeSubsystem(
-        int enableButtonIndex,
         rev::CANSparkMax& intakeDrive,
-        frc::Joystick& stick
+        frc::XboxController& stick
 ) :
-    m_runIntake(false),
-    m_buttonIndex(enableButtonIndex),
     m_intakeDrive{intakeDrive},
-    m_stick{stick}
+    m_xbox{stick}
 {
   m_intakeDrive.RestoreFactoryDefaults();
 }
@@ -20,11 +17,9 @@ void IntakeSubsystem::ModeInit()
 {
     // Call GetRawButtonPressed to discard any button presses
     // made while the robot was disabled.
-    m_stick.GetRawButtonPressed(m_buttonIndex);
     StopMotor();
     // Display local member values.
-    frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
-    frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
+    frc::SmartDashboard::PutBoolean("Run Intake", false);
 }
 
 // This is mostly copied from SPARK-MAX-Examples/C++/Get and Set Parameters
@@ -68,39 +63,29 @@ void IntakeSubsystem::RobotInit()
 
     // read back ramp rate value
     frc::SmartDashboard::PutNumber("Intake Ramp Rate", m_intakeDrive.GetOpenLoopRampRate());
-
-    // Display local member values.
-    frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
-    frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
 }
 
 
 bool IntakeSubsystem::RunPeriodic()
 {
-    // Toggle Intake state on button press.
-    if (m_stick.GetRawButtonPressed(m_buttonIndex))
+    // Run Intake on button press. Momentary press is easier to control.
+    // The triggers return [0,1], so ignore small values.
+    bool runIntake = m_xbox.GetLeftTriggerAxis() > 0.1;
+    if (runIntake)
     {
-      m_runIntake = !m_runIntake;
-    }
-    // 
-    if (m_runIntake)
-    {
-    // Throttle is connected the slider on the controller.
-    // The throttle axis reads -1.0 when pressed forward.
-      m_intakeDrive.Set(m_stick.GetThrottle());
+      // Empirically determined input value.
+      m_intakeDrive.Set(-0.65);
     } else {
       m_intakeDrive.Set(0);
     }
     // periodically read voltage, temperature, and applied output and publish to SmartDashboard
     frc::SmartDashboard::PutNumber("Intake Output", m_intakeDrive.GetAppliedOutput());
-    frc::SmartDashboard::PutBoolean("Run Intake", m_runIntake);
-    frc::SmartDashboard::PutNumber("Throttle", m_stick.GetThrottle());
-    return m_runIntake;
+    frc::SmartDashboard::PutBoolean("Run Intake", runIntake);
+    return runIntake;
 }
 
 
 void IntakeSubsystem::StopMotor()
 {
-    m_runIntake = false;
-    m_intakeDrive.StopMotor();
+  m_intakeDrive.StopMotor();
 }
