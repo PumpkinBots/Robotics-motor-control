@@ -224,18 +224,18 @@ public:
     }
     frc::SmartDashboard::PutBoolean("Run Intake Retraction Up", runIntakeRetractionUp);
 
-    bool runClimberLeft;
+    bool runClimberRight;
     if (m_xbox.GetYButton())
     {
-      runClimberLeft = !runClimberLeft;
+      runClimberRight = !runClimberRight;
     }
-    if (runClimberLeft)
+    if (runClimberRight)
     {
-      m_climbDrive.Set(m_xbox.GetLeftY());
+      m_climbDrive.Set(m_xbox.GetRightY());
     } else {
       m_climbDrive.Set(0.0);
     }
-    frc::SmartDashboard::PutBoolean("Run Left Climber", runClimberLeft);
+    frc::SmartDashboard::PutBoolean("Run Left Climber", runClimberRight);
 
     bool runIntakeXbox;
     if (m_xbox.GetLeftTriggerAxis() > 0){
