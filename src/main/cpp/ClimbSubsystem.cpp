@@ -66,8 +66,14 @@ void ClimbSubsystem::RobotInit()
 
 void ClimbSubsystem::RunPeriodic()
 {
+  bool runClimb = m_xbox.GetRightStickButton();
   // Just hook up the climber motor to the right thumb stick.
-  m_drive.Set(-m_xbox.GetRightY());
+  if (runClimb)
+  {
+    m_drive.Set(-m_xbox.GetRightY());
+  } else {
+    m_drive.Set(0);
+  }
   frc::SmartDashboard::PutNumber("Climber Output", m_drive.GetAppliedOutput());
 }
 
