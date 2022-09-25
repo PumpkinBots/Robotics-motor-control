@@ -6,7 +6,8 @@
  * IDs 0-1 are are reserved for the Power Distribution Module.
  * ID 64 is max.
  */
-static constexpr int kclimbDeviceID = 3; // Spark for climb motor
+static constexpr int kclimbDeviceID = 3; // Spark for right climb motor 
+static constexpr int kclimbDeviceIDLeft = 12; // Spark for left climb motor
 static constexpr int kIntakeRetractionDeviceID = 4; // Spark for winch motor
 static constexpr int kLaunchDeviceID = 5; // Spark for launcher motor
 static constexpr int kTransportDeviceID = 6; // Spark for transport motor

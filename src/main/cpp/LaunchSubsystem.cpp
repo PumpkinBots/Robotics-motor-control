@@ -66,6 +66,7 @@ bool LaunchSubsystem::RunAutonomous(bool enabled)
     // m_launchDrive.Set(-m_stick.GetThrottle());
     // Super-awesome calibration.
     m_launchDrive.Set(0.687);
+    // normal flywheel speed = 0.687
   } else {
     m_launchDrive.Set(0);
   }

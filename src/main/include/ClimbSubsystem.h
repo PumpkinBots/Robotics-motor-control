@@ -8,6 +8,7 @@ class ClimbSubsystem {
 public:
     ClimbSubsystem(
         rev::CANSparkMax& climbDrive,
+        rev::CANSparkMax& climbDriveLeft,
         frc::XboxController& stick
     );
 
@@ -24,8 +25,12 @@ public:
 private:
     // Non-owning reference to the motor controller.
     rev::CANSparkMax& m_drive;
+    rev::CANSparkMax& m_driveLeft;
+
     // Non-owning reference to the joystick.
     frc::XboxController& m_xbox;
     // Encoder object created to display velocity values
     rev::SparkMaxRelativeEncoder m_encoder = m_drive.GetEncoder();
+    rev::SparkMaxRelativeEncoder m_encoder = m_driveLeft.GetEncoder();
+
 };

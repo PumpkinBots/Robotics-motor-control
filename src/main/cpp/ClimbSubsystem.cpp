@@ -4,9 +4,11 @@
 
 ClimbSubsystem::ClimbSubsystem(
         rev::CANSparkMax& climbDrive,
+        rev::CANSparkMax& climbDriveLeft,
         frc::XboxController& stick
 ) :
     m_drive{climbDrive},
+    m_driveLeft{climbDriveLeft},
     m_xbox{stick}
 {
   m_drive.RestoreFactoryDefaults();
@@ -58,9 +60,11 @@ void ClimbSubsystem::RobotInit()
     }
 
     // read back ramp rate value
-    frc::SmartDashboard::PutNumber("Climber Ramp Rate", m_drive.GetOpenLoopRampRate());
+    //frc::SmartDashboard::PutNumber("Climber Ramp Rate", m_drive.GetOpenLoopRampRate());
 
   frc::SmartDashboard::PutNumber("Climber Output", m_drive.GetAppliedOutput());
+  frc::SmartDashboard::PutNumber("Climber Output", m_driveLeft.GetAppliedOutput());
+
 }
 
 
@@ -71,14 +75,17 @@ void ClimbSubsystem::RunPeriodic()
   if (runClimb)
   {
     m_drive.Set(-m_xbox.GetRightY());
+    m_driveLeft.Set(-m_xbox.GetRightY());
   } else {
     m_drive.Set(0);
+    m_driveLeft.Set(0);
   }
-  frc::SmartDashboard::PutNumber("Climber Output", m_drive.GetAppliedOutput());
+  //frc::SmartDashboard::PutNumber("Climber Output", m_drive.GetAppliedOutput());
 }
 
 
 void ClimbSubsystem::StopMotor()
 {
     m_drive.StopMotor();
+    m_driveLeft.StopMotor();
 }

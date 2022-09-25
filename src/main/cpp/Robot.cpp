@@ -272,6 +272,8 @@ private:
   rev::CANSparkMax m_intakeDrive{kIntakeDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_intakeRetractionDrive{kIntakeRetractionDeviceID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_climbDrive{kclimbDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_climbDriveLeft{kclimbDeviceIDLeft, rev::CANSparkMax::MotorType::kBrushless};
+
 
   // Create an IntakeSubsystem to encapsulate the behavior.
   // This object must be created after the objects that it uses.
@@ -284,7 +286,7 @@ private:
   // Bind the intake retraction on/off to joytsick button 4.
   IntakeRetractionSubsystem m_intakeRetraction{m_intakeRetractionDrive, m_xbox};
   // Bind the
-  ClimbSubsystem m_climb{m_climbDrive, m_xbox};
+  ClimbSubsystem m_climb{m_climbDrive, m_climbDriveLeft, m_xbox};
 
 
   // Allow the robot to access the data from the camera. 
