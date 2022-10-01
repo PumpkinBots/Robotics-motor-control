@@ -30,7 +30,7 @@ private:
     // Non-owning reference to the joystick.
     frc::XboxController& m_xbox;
     // Encoder object created to display velocity values
-    rev::SparkMaxRelativeEncoder m_encoder = m_drive.GetEncoder();
-    rev::SparkMaxRelativeEncoder m_encoder = m_driveLeft.GetEncoder();
+    //rev::SparkMaxRelativeEncoder m_encoder = m_drive.GetEncoder();
+    //rev::SparkMaxRelativeEncoder m_encoder = m_driveLeft.GetEncoder();
 
 };
